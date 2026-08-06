@@ -2,6 +2,45 @@
 
 This guide covers deploying the Sequence game to GitHub Pages (frontend) and Supabase (backend).
 
+## 🚀 Quick Start - Already Set Up!
+
+Your app is already configured for deployment! Just follow these 3 steps:
+
+### Step 1: Add GitHub Secrets
+
+1. Go to: https://github.com/koinoyokan1/sequence/settings/secrets/actions
+2. Click **New repository secret** twice to add these:
+
+   **Secret 1:**
+   - Name: `VITE_SUPABASE_URL`
+   - Value: `https://fccmiuryjimjcqrhclmy.supabase.co`
+
+   **Secret 2:**
+   - Name: `VITE_SUPABASE_ANON_KEY`
+   - Value: `sb_publishable_P5auUwMI75DT6kX6TSCUmw_c6oLmx7T`
+
+### Step 2: Enable GitHub Pages
+
+1. Go to: https://github.com/koinoyokan1/sequence/settings/pages
+2. Under **Source**, select: **GitHub Actions**
+3. Click **Save**
+
+### Step 3: Apply Database Migration
+
+Run the new migration in Supabase SQL Editor:
+
+1. Go to: https://supabase.com/dashboard/project/fccmiuryjimjcqrhclmy/sql
+2. Paste contents from `supabase/migrations/004_update_sequences_required.sql`
+3. Click **Run**
+
+### ✅ Done!
+
+Check deployment progress: https://github.com/koinoyokan1/sequence/actions
+
+Your app will be live at: **https://koinoyokan1.github.io/sequence/**
+
+---
+
 ## Prerequisites
 
 - GitHub account
