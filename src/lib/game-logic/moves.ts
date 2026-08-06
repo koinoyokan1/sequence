@@ -1,5 +1,5 @@
 import { BoardCell, Card, Position, MoveType } from '@/types/game'
-import { getJackType, cardToString, isSameCard } from './cards'
+import { getJackType } from './cards'
 import { findCardPositions, canPlaceChip, getCellChip, isFreeSpace } from './board'
 import { canRemoveChip } from './sequence'
 import type { Sequence } from '@/types/game'
@@ -18,7 +18,6 @@ export function validateMove(
   currentTeam: number,
   sequences: Sequence[]
 ): MoveValidation {
-  const { x, y } = position
   const jackType = getJackType(card)
   
   // Handle one-eyed jack (remove opponent's chip)

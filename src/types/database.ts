@@ -54,8 +54,8 @@ export interface Database {
       }
       start_game: {
         Args: {
-          game_id: string
-          player_id: string
+          p_game_id: string
+          p_player_id: string
         }
         Returns: {
           success: boolean
@@ -63,10 +63,10 @@ export interface Database {
       }
       play_card: {
         Args: {
-          game_id: string
-          player_id: string
-          card: any
-          position: any
+          p_game_id: string
+          p_player_id: string
+          p_card: any
+          p_position: any
         }
         Returns: {
           success: boolean
@@ -77,13 +77,24 @@ export interface Database {
       }
       ready_player: {
         Args: {
-          game_id: string
-          player_id: string
+          p_game_id: string
+          p_player_id: string
           ready: boolean
         }
         Returns: {
           success: boolean
         }
+      }
+      update_game_state: {
+        Args: {
+          p_game_id: string
+          p_board_state: any
+          p_sequences: any
+          p_next_turn: number
+          p_game_over: boolean
+          p_winner_team: number | null
+        }
+        Returns: void
       }
     }
   }

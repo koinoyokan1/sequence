@@ -64,9 +64,9 @@ export function useGame() {
         .select('draw_pile')
         .eq('game_id', gameId)
         .single()
-      
+
       let drawnCard: Card | null = null
-      if (deckData?.draw_pile && deckData.draw_pile.length > 0) {
+      if (deckData && 'draw_pile' in deckData && Array.isArray(deckData.draw_pile) && deckData.draw_pile.length > 0) {
         const { card, remainingDeck } = drawCard(deckData.draw_pile as Card[])
         drawnCard = card
         
@@ -149,7 +149,7 @@ export function useGame() {
         .single()
 
       let drawnCard: Card | null = null
-      if (deckData?.draw_pile && deckData.draw_pile.length > 0) {
+      if (deckData && 'draw_pile' in deckData && Array.isArray(deckData.draw_pile) && deckData.draw_pile.length > 0) {
         const { card: newCard, remainingDeck } = drawCard(deckData.draw_pile as Card[])
         drawnCard = newCard
 

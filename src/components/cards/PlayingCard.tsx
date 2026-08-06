@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion'
 import clsx from 'clsx'
 import type { Card } from '@/types/game'
-import { SUIT_SYMBOLS, SUIT_COLORS } from '@/lib/constants'
+import { SUIT_SYMBOLS } from '@/lib/constants'
 import { getJackType } from '@/lib/game-logic/cards'
 
 interface PlayingCardProps {

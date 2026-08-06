@@ -32,15 +32,13 @@ export function CardHand() {
       setSelectedCard(card)
       
       const jackType = getJackType(card)
-      let positions
-      
+      let positions: { x: number; y: number }[] = []
+
       if (jackType === 'one-eyed') {
         // Highlight opponent chips
         const currentPlayer = players.find(p => p.id === playerId)
         if (currentPlayer) {
           positions = findOpponentChips(boardState, currentPlayer.team)
-        } else {
-          positions = []
         }
       } else if (jackType === 'two-eyed') {
         // Highlight all empty positions
@@ -53,7 +51,7 @@ export function CardHand() {
           pos => boardState[pos.y][pos.x].chip === null
         )
       }
-      
+
       setHighlightedPositions(positions)
     }
   }

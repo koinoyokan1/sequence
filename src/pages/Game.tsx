@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { supabase } from '@/lib/supabase'
 import { useGameStore } from '@/stores/gameStore'
 import { useRealtime } from '@/hooks/useRealtime'
@@ -12,7 +12,6 @@ import { dealCards } from '@/lib/game-logic/cards'
 
 export function Game() {
   const { gameId } = useParams()
-  const navigate = useNavigate()
 
   const playerId = useGameStore(state => state.playerId)
   const game = useGameStore(state => state.game)

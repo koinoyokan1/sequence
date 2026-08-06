@@ -165,7 +165,7 @@ export function hasWon(sequences: Sequence[], team: number, requiredSequences: n
 }
 
 export function canRemoveChip(
-  board: BoardCell[][],
+  _board: BoardCell[][],
   x: number,
   y: number,
   sequences: Sequence[]

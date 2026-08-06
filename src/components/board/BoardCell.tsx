@@ -1,11 +1,9 @@
 import { motion } from 'framer-motion'
 import clsx from 'clsx'
 import type { BoardCell as BoardCellType } from '@/types/game'
-import { ChipPiece } from './ChipPiece'
 import { SUIT_SYMBOLS } from '@/lib/constants'
 import { isPositionInSequence } from '@/lib/game-logic/sequence'
 import { useGameStore } from '@/stores/gameStore'
-import { getJackType } from '@/lib/game-logic/cards'
 
 interface BoardCellProps {
   cell: BoardCellType
@@ -19,7 +17,6 @@ export function BoardCell({ cell, highlighted, onClick }: BoardCellProps) {
   const inSequence = isPositionInSequence(sequences, cell.x, cell.y)
 
   const isRed = cell.card && (cell.card.suit === 'hearts' || cell.card.suit === 'diamonds')
-  const jackType = cell.card ? getJackType(cell.card) : 'none'
   
   return (
     <motion.button
