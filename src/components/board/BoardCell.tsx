@@ -1,0 +1,79 @@
+import { motion } from 'framer-motion'
+import clsx from 'clsx'
+import type { BoardCell as BoardCellType } from '@/types/game'
+import { ChipPiece } from './ChipPiece'
+import { SUIT_SYMBOLS } from '@/lib/constants'
+import { isPositionInSequence } from '@/lib/game-logic/sequence'
+import { useGameStore } from '@/stores/gameStore'
+import { getJackType } from '@/lib/game-logic/cards'
+
+interface BoardCellProps {
+  cell: BoardCellType
+  highlighted?: boolean
+  onClick?: () => void
+}
+
+export function BoardCell({ cell, highlighted, onClick }: BoardCellProps) {
+  const sequences = useGameStore(state => state.sequences)
+  const isMyTurn = useGameStore(state => state.isMyTurn)
+  const inSequence = isPositionInSequence(sequences, cell.x, cell.y)
+
+  const isRed = cell.card && (cell.card.suit === 'hearts' || cell.card.suit === 'diamonds')
+  const jackType = cell.card ? getJackType(cell.card) : 'none'
+  
+  return (
+    <motion.button
+      whileHover={highlighted && isMyTurn ? { scale: 1.05 } : {}}
+      onClick={onClick}
+      disabled={!highlighted || !isMyTurn}
+      className={clsx(
+        'relative aspect-square rounded-lg transition-all duration-200',
+        'flex items-center justify-center',
+        'border-2',
+        cell.isFreeSpace && 'bg-gradient-to-br from-yellow-600 to-yellow-700 border-yellow-800',
+        !cell.isFreeSpace && 'bg-gray-800 border-gray-700',
+        highlighted && isMyTurn && 'ring-4 ring-primary-500 ring-opacity-50 cursor-pointer',
+        !highlighted && 'cursor-default',
+        inSequence && 'ring-2 ring-green-500'
+      )}
+    >
+      {/* Free space marker */}
+      {cell.isFreeSpace && (
+        <div className="text-white font-bold text-xs">FREE</div>
+      )}
+      
+      {/* Card display - background changes to team color when chip is placed */}
+      {!cell.isFreeSpace && cell.card && (
+        <div className={clsx(
+          'absolute inset-0 flex flex-col items-center justify-center p-1 rounded',
+          !cell.chip && 'bg-white',
+          cell.chip === 1 && 'bg-team-1 border-4 border-red-800',
+          cell.chip === 2 && 'bg-team-2 border-4 border-blue-800',
+          inSequence && 'ring-4 ring-yellow-400'
+        )}>
+          <div className={clsx(
+            'text-xs font-bold',
+            cell.chip
+              ? 'text-white'
+              : isRed ? 'text-red-600' : 'text-gray-900'
+          )}>
+            {cell.card.rank}
+          </div>
+          <div className={clsx(
+            'text-lg',
+            cell.chip
+              ? 'text-white'
+              : isRed ? 'text-red-600' : 'text-gray-900'
+          )}>
+            {SUIT_SYMBOLS[cell.card.suit]}
+          </div>
+        </div>
+      )}
+      
+      {/* Highlight overlay */}
+      {highlighted && isMyTurn && (
+        <div className="absolute inset-0 bg-primary-500 bg-opacity-30 rounded-lg animate-pulse" />
+      )}
+    </motion.button>
+  )
+}

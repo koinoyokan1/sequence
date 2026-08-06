@@ -1,0 +1,205 @@
+import { useCallback } from 'react'
+import { supabase } from '@/lib/supabase'
+import { useGameStore } from '@/stores/gameStore'
+import { useUIStore } from '@/stores/uiStore'
+import type { Card, Position } from '@/types/game'
+import { validateMove } from '@/lib/game-logic/moves'
+import { placeChip, removeChip } from '@/lib/game-logic/board'
+import { detectSequences, hasWon } from '@/lib/game-logic/sequence'
+import { removeCardFromHand, drawCard } from '@/lib/game-logic/cards'
+
+export function useGame() {
+  const gameId = useGameStore(state => state.gameId)
+  const playerId = useGameStore(state => state.playerId)
+  const game = useGameStore(state => state.game)
+  const players = useGameStore(state => state.players)
+  const myHand = useGameStore(state => state.myHand)
+  const boardState = useGameStore(state => state.boardState)
+  const sequences = useGameStore(state => state.sequences)
+  const selectedCard = useGameStore(state => state.selectedCard)
+  const isMyTurn = useGameStore(state => state.isMyTurn)
+  
+  const setMyHand = useGameStore(state => state.setMyHand)
+  const setBoardState = useGameStore(state => state.setBoardState)
+  const setSequences = useGameStore(state => state.setSequences)
+  const setSelectedCard = useGameStore(state => state.setSelectedCard)
+  const setHighlightedPositions = useGameStore(state => state.setHighlightedPositions)
+  
+  const addToast = useUIStore(state => state.addToast)
+  const setLoading = useUIStore(state => state.setLoading)
+  
+  const playCard = useCallback(async (position: Position) => {
+    console.log('playCard debug:', { gameId, playerId, game: !!game, selectedCard: !!selectedCard, isMyTurn })
+
+    if (!gameId || !playerId || !game || !selectedCard || !isMyTurn) {
+      addToast('Cannot play card right now', 'error')
+      return
+    }
+    
+    const currentPlayer = players.find(p => p.id === playerId)
+    if (!currentPlayer) return
+    
+    // Validate move
+    const validation = validateMove(boardState, selectedCard, position, currentPlayer.team, sequences)
+    
+    if (!validation.valid) {
+      addToast(validation.reason || 'Invalid move', 'error')
+      return
+    }
+    
+    setLoading(true, 'Playing card...')
+    
+    try {
+      // Update board state
+      let newBoard = validation.moveType === 'place'
+        ? placeChip(boardState, position.x, position.y, currentPlayer.team)
+        : removeChip(boardState, position.x, position.y)
+      
+      // Remove card from hand
+      const newHand = removeCardFromHand(myHand, selectedCard.id)
+      
+      // Draw new card from deck
+      const { data: deckData } = await supabase
+        .from('game_decks')
+        .select('draw_pile')
+        .eq('game_id', gameId)
+        .single()
+      
+      let drawnCard: Card | null = null
+      if (deckData?.draw_pile && deckData.draw_pile.length > 0) {
+        const { card, remainingDeck } = drawCard(deckData.draw_pile as Card[])
+        drawnCard = card
+        
+        // Update deck
+        await supabase
+          .from('game_decks')
+          .update({ draw_pile: remainingDeck })
+          .eq('game_id', gameId)
+      }
+      
+      // Add drawn card to hand
+      const finalHand = drawnCard ? [...newHand, drawnCard] : newHand
+      
+      // Detect sequences
+      const newSequences = detectSequences(newBoard)
+      
+      // Check for win
+      const playerCount = players.length
+      const sequencesRequired = game.sequences_required
+      const gameOver = hasWon(newSequences, currentPlayer.team, sequencesRequired)
+      
+      // Get next turn
+      const nextTurn = (game.current_turn + 1) % playerCount
+      
+      // Update game state in database
+      await supabase.rpc('update_game_state', {
+        p_game_id: gameId,
+        p_board_state: newBoard,
+        p_sequences: newSequences,
+        p_next_turn: nextTurn,
+        p_game_over: gameOver,
+        p_winner_team: gameOver ? currentPlayer.team : null,
+      })
+      
+      // Update player hand
+      await supabase
+        .from('player_hands')
+        .update({ cards: finalHand })
+        .eq('player_id', playerId)
+      
+      // Update local state
+      setBoardState(newBoard)
+      setSequences(newSequences)
+      setMyHand(finalHand)
+      setSelectedCard(null)
+      setHighlightedPositions([])
+      
+      if (gameOver) {
+        addToast('You won! 🎉', 'success')
+      }
+    } catch (error) {
+      console.error('Error playing card:', error)
+      addToast('Failed to play card', 'error')
+    } finally {
+      setLoading(false)
+    }
+  }, [gameId, playerId, game, selectedCard, isMyTurn, players, boardState, sequences, myHand,
+      setBoardState, setSequences, setMyHand, setSelectedCard, setHighlightedPositions, addToast, setLoading])
+  
+  const discardCard = useCallback(async (card: Card) => {
+    if (!gameId || !playerId || !game || !isMyTurn) {
+      addToast('Cannot discard card right now', 'error')
+      return
+    }
+
+    const currentPlayer = players.find(p => p.id === playerId)
+    if (!currentPlayer) return
+
+    setLoading(true, 'Discarding card...')
+
+    try {
+      // Remove card from hand
+      const newHand = removeCardFromHand(myHand, card.id)
+
+      // Draw new card from deck
+      const { data: deckData } = await supabase
+        .from('game_decks')
+        .select('draw_pile')
+        .eq('game_id', gameId)
+        .single()
+
+      let drawnCard: Card | null = null
+      if (deckData?.draw_pile && deckData.draw_pile.length > 0) {
+        const { card: newCard, remainingDeck } = drawCard(deckData.draw_pile as Card[])
+        drawnCard = newCard
+
+        // Update deck
+        await supabase
+          .from('game_decks')
+          .update({ draw_pile: remainingDeck })
+          .eq('game_id', gameId)
+      }
+
+      // Add drawn card to hand
+      const finalHand = drawnCard ? [...newHand, drawnCard] : newHand
+
+      // Get next turn
+      const playerCount = players.length
+      const nextTurn = (game.current_turn + 1) % playerCount
+
+      // Update game turn
+      await supabase.rpc('update_game_state', {
+        p_game_id: gameId,
+        p_board_state: boardState,
+        p_sequences: sequences,
+        p_next_turn: nextTurn,
+        p_game_over: false,
+        p_winner_team: null,
+      })
+
+      // Update player hand
+      await supabase
+        .from('player_hands')
+        .update({ cards: finalHand })
+        .eq('player_id', playerId)
+
+      // Update local state
+      setMyHand(finalHand)
+      setSelectedCard(null)
+      setHighlightedPositions([])
+
+      addToast('Card discarded', 'info')
+    } catch (error) {
+      console.error('Error discarding card:', error)
+      addToast('Failed to discard card', 'error')
+    } finally {
+      setLoading(false)
+    }
+  }, [gameId, playerId, game, isMyTurn, players, myHand, boardState, sequences,
+      setMyHand, setSelectedCard, setHighlightedPositions, addToast, setLoading])
+
+  return {
+    playCard,
+    discardCard,
+  }
+}
