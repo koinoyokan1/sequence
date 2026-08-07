@@ -10,14 +10,11 @@ export function useRealtime(gameId: string | null) {
   const setSequences = useGameStore(state => state.setSequences)
   const addChatMessage = useGameStore(state => state.addChatMessage)
 
-  // Track the current turn to detect if we're getting stale data
-  const lastSeenTurnRef = useRef<number>(-1)
-  
   useEffect(() => {
     if (!gameId) return
-    
+
     const channels: RealtimeChannel[] = []
-    
+
     // Subscribe to game updates
     const gameChannel = supabase
       .channel(`game:${gameId}`)
@@ -34,29 +31,18 @@ export function useRealtime(gameId: string | null) {
           if (payload.new) {
             const newGameData = payload.new as any
 
-            // For UPDATE events, check if this is newer or equal data
-            // We use >= to handle both optimistic updates and database updates
-            // Even if turn numbers match, we apply it to sync any other fields
-            if (newGameData.current_turn !== lastSeenTurnRef.current || payload.eventType !== 'UPDATE') {
-              console.log('Applying realtime game update:', {
-                turn: newGameData.current_turn,
-                previousTurn: lastSeenTurnRef.current,
-                eventType: payload.eventType,
-                boardState: !!newGameData.board_state,
-                sequences: newGameData.sequences?.length || 0
-              })
-              lastSeenTurnRef.current = newGameData.current_turn
+            console.log('Applying realtime game update:', {
+              turn: newGameData.current_turn,
+              eventType: payload.eventType,
+              boardState: !!newGameData.board_state,
+              sequences: newGameData.sequences?.length || 0
+            })
 
-              // Update all game state - database is source of truth
-              setGame(newGameData)
-              setBoardState(newGameData.board_state)
-              setSequences(newGameData.sequences || [])
-            } else {
-              // Same turn number on UPDATE - likely our own optimistic update echo
-              console.log('Skipping duplicate realtime update (same turn)', {
-                turn: newGameData.current_turn
-              })
-            }
+            // Always apply database updates - database is the source of truth
+            // This ensures all players see the same state
+            setGame(newGameData)
+            setBoardState(newGameData.board_state)
+            setSequences(newGameData.sequences || [])
           }
         }
       )
