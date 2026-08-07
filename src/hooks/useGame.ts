@@ -38,34 +38,42 @@ export function useGame() {
       addToast('Cannot play card right now', 'error')
       return
     }
-    
+
     const currentPlayer = players.find(p => p.id === playerId)
     if (!currentPlayer) return
-    
+
     // Validate move
     const validation = validateMove(boardState, selectedCard, position, currentPlayer.team, sequences)
-    
+
     if (!validation.valid) {
       addToast(validation.reason || 'Invalid move', 'error')
       return
     }
-    
-    setLoading(true, 'Playing card...')
-    
+
+    // Calculate new state before any async operations
+    const newBoard = validation.moveType === 'place'
+      ? placeChip(boardState, position.x, position.y, currentPlayer.team)
+      : removeChip(boardState, position.x, position.y)
+
+    const newHand = removeCardFromHand(myHand, selectedCard.id)
+    const newSequences = detectSequences(newBoard)
+    const playerCount = players.length
+    const sequencesRequired = game.sequences_required
+    const gameOver = hasWon(newSequences, currentPlayer.team, sequencesRequired)
+    const nextTurn = (game.current_turn + 1) % playerCount
+
+    // OPTIMISTIC UPDATE: Update UI immediately
+    setBoardState(newBoard)
+    setSequences(newSequences)
+    setSelectedCard(null)
+    setHighlightedPositions([])
+    playCardPlaceSound()
+
+    // Show loading indicator for background sync
+    setLoading(true, 'Syncing...')
+
     try {
-      // Update board state
-      let newBoard = validation.moveType === 'place'
-        ? placeChip(boardState, position.x, position.y, currentPlayer.team)
-        : removeChip(boardState, position.x, position.y)
-
-      // Remove card from hand
-      const newHand = removeCardFromHand(myHand, selectedCard.id)
-
-      // TODO: Detect ambiguous sequences and show choice modal
-      // For now, we always use the leftmost 5 chips for 6-chip runs
-      // But all 6+ chips are protected from removal (handled in canRemoveChip)
-
-      // Draw new card from deck (with automatic reshuffle)
+      // Fetch deck data to draw new card
       const { data: deckData } = await supabase
         .from('game_decks')
         .select('draw_pile, discard_pile')
@@ -74,6 +82,8 @@ export function useGame() {
 
       let drawnCard: Card | null = null
       let reshuffleMessage = ''
+      let newDrawPile: Card[] = []
+      let newDiscardPile: Card[] = []
 
       if (deckData && 'draw_pile' in deckData && 'discard_pile' in deckData) {
         const drawPile = (deckData.draw_pile as Card[]) || []
@@ -83,77 +93,52 @@ export function useGame() {
         const updatedDiscardPile = addToDiscardPile(discardPile, selectedCard)
 
         // Draw with reshuffle
-        const { card, newDrawPile, newDiscardPile, reshuffled } = drawCardWithReshuffle(
-          drawPile,
-          updatedDiscardPile
-        )
+        const result = drawCardWithReshuffle(drawPile, updatedDiscardPile)
+        drawnCard = result.card
+        newDrawPile = result.newDrawPile
+        newDiscardPile = result.newDiscardPile
 
-        drawnCard = card
-
-        if (reshuffled) {
+        if (result.reshuffled) {
           reshuffleMessage = 'Deck reshuffled! '
         }
-
-        // Update deck
-        await supabase
-          .from('game_decks')
-          .update({
-            draw_pile: newDrawPile,
-            discard_pile: newDiscardPile
-          })
-          .eq('game_id', gameId)
       }
-      
+
       // Add drawn card to hand
       const finalHand = drawnCard ? [...newHand, drawnCard] : newHand
-      
-      // Detect sequences
-      const newSequences = detectSequences(newBoard)
-      
-      // Check for win
-      const playerCount = players.length
-      const sequencesRequired = game.sequences_required
-      const gameOver = hasWon(newSequences, currentPlayer.team, sequencesRequired)
-      
-      // Get next turn
-      const nextTurn = (game.current_turn + 1) % playerCount
-      
-      // Update game state in database
-      await supabase.rpc('update_game_state', {
+
+      // Update hand optimistically
+      setMyHand(finalHand)
+
+      // SINGLE RPC CALL: Update everything in one transaction
+      await supabase.rpc('play_card_optimized', {
         p_game_id: gameId,
-        p_board_state: newBoard,
-        p_sequences: newSequences,
+        p_player_id: playerId,
+        p_new_board_state: newBoard,
+        p_new_sequences: newSequences,
         p_next_turn: nextTurn,
         p_game_over: gameOver,
         p_winner_team: gameOver ? currentPlayer.team : null,
+        p_new_draw_pile: newDrawPile,
+        p_new_discard_pile: newDiscardPile,
+        p_new_hand: finalHand,
       })
-      
-      // Update player hand
-      await supabase
-        .from('player_hands')
-        .update({ cards: finalHand })
-        .eq('player_id', playerId)
-      
-      // Update local state
-      setBoardState(newBoard)
-      setSequences(newSequences)
-      setMyHand(finalHand)
-      setSelectedCard(null)
-      setHighlightedPositions([])
 
-      // Play sound effects
+      // Show success feedback
       if (gameOver) {
         playWinSound()
         addToast('You won! 🎉', 'success')
-      } else {
-        playCardPlaceSound()
-        if (reshuffleMessage) {
-          addToast(reshuffleMessage + 'Card played!', 'info')
-        }
+      } else if (reshuffleMessage) {
+        addToast(reshuffleMessage + 'Card played!', 'info')
       }
     } catch (error) {
       console.error('Error playing card:', error)
       addToast('Failed to play card', 'error')
+
+      // Revert optimistic updates on error
+      setBoardState(boardState)
+      setSequences(sequences)
+      setMyHand(myHand)
+      setSelectedCard(selectedCard)
     } finally {
       setLoading(false)
     }
