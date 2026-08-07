@@ -23,20 +23,23 @@ describe('useRealtime - Multi-Client Synchronization', () => {
 
   beforeEach(() => {
     vi.clearAllMocks()
-    
+
     mockSetGame = vi.fn()
     mockSetBoardState = vi.fn()
     mockSetSequences = vi.fn()
     mockSetPlayers = vi.fn()
     mockAddChatMessage = vi.fn()
 
-    vi.mocked(useGameStore).mockReturnValue({
-      setGame: mockSetGame,
-      setBoardState: mockSetBoardState,
-      setSequences: mockSetSequences,
-      setPlayers: mockSetPlayers,
-      addChatMessage: mockAddChatMessage,
-    } as any)
+    vi.mocked(useGameStore).mockImplementation((selector: any) => {
+      const state = {
+        setGame: mockSetGame,
+        setBoardState: mockSetBoardState,
+        setSequences: mockSetSequences,
+        setPlayers: mockSetPlayers,
+        addChatMessage: mockAddChatMessage,
+      }
+      return selector(state)
+    })
 
     // Mock Supabase realtime channel
     const mockChannel = {

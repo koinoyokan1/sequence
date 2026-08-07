@@ -153,11 +153,12 @@ describe('Multiplayer Synchronization - Integration Tests', () => {
 
   it('should sync board state between two players', async () => {
     // Setup Player 1
-    vi.mocked(useGameStore).mockReturnValue(player1Store)
+    vi.mocked(useGameStore).mockImplementation((selector: any) => selector(player1Store))
+    vi.mocked(useUIStore).mockImplementation((selector: any) => selector({ addToast: vi.fn(), setLoading: vi.fn() }))
     const { result: player1 } = renderHook(() => useGame())
 
     // Setup Player 2 realtime
-    vi.mocked(useGameStore).mockReturnValue(player2Store)
+    vi.mocked(useGameStore).mockImplementation((selector: any) => selector(player2Store))
     renderHook(() => useRealtime('game-123'))
 
     // Player 1 makes a move

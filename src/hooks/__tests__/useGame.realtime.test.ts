@@ -70,6 +70,14 @@ describe('useGame - Realtime Synchronization Tests', () => {
       }
       return selector(state)
     })
+
+    vi.mocked(useUIStore).mockImplementation((selector: any) => {
+      const state = {
+        addToast: vi.fn(),
+        setLoading: vi.fn(),
+      }
+      return selector(state)
+    })
   })
 
   afterEach(() => {

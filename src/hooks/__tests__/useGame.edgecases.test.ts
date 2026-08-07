@@ -152,12 +152,28 @@ describe('useGame - Edge Cases and Corner Cases', () => {
 
   describe('Invalid Game States', () => {
     it('should prevent move when not player turn', async () => {
-      vi.mocked(useGameStore).mockReturnValue({
-        ...vi.mocked(useGameStore)(),
-        isMyTurn: false,
-      } as any)
+      vi.mocked(useGameStore).mockImplementation((selector: any) => {
+        const state = {
+          gameId: mockGameId,
+          playerId: mockPlayerId,
+          game: mockGame,
+          players: mockPlayers,
+          myHand: [mockCard],
+          boardState: mockGame.board_state,
+          sequences: [],
+          selectedCard: mockCard,
+          isMyTurn: false,  // Override
+          setGame: vi.fn(),
+          setBoardState: vi.fn(),
+          setSequences: vi.fn(),
+          setMyHand: vi.fn(),
+          setSelectedCard: vi.fn(),
+          setHighlightedPositions: vi.fn(),
+        }
+        return selector(state)
+      })
 
-      const { result } = renderHook(() => useGame())
+      const { result} = renderHook(() => useGame())
 
       await act(async () => {
         await result.current.playCard({ x: 0, y: 0 })
@@ -168,10 +184,26 @@ describe('useGame - Edge Cases and Corner Cases', () => {
     })
 
     it('should prevent move when no card selected', async () => {
-      vi.mocked(useGameStore).mockReturnValue({
-        ...vi.mocked(useGameStore)(),
-        selectedCard: null,
-      } as any)
+      vi.mocked(useGameStore).mockImplementation((selector: any) => {
+        const state = {
+          gameId: mockGameId,
+          playerId: mockPlayerId,
+          game: mockGame,
+          players: mockPlayers,
+          myHand: [mockCard],
+          boardState: mockGame.board_state,
+          sequences: [],
+          selectedCard: null,  // Override
+          isMyTurn: true,
+          setGame: vi.fn(),
+          setBoardState: vi.fn(),
+          setSequences: vi.fn(),
+          setMyHand: vi.fn(),
+          setSelectedCard: vi.fn(),
+          setHighlightedPositions: vi.fn(),
+        }
+        return selector(state)
+      })
 
       const { result } = renderHook(() => useGame())
 
@@ -184,10 +216,26 @@ describe('useGame - Edge Cases and Corner Cases', () => {
     })
 
     it('should prevent move when game is null', async () => {
-      vi.mocked(useGameStore).mockReturnValue({
-        ...vi.mocked(useGameStore)(),
-        game: null,
-      } as any)
+      vi.mocked(useGameStore).mockImplementation((selector: any) => {
+        const state = {
+          gameId: mockGameId,
+          playerId: mockPlayerId,
+          game: null,  // Override
+          players: mockPlayers,
+          myHand: [mockCard],
+          boardState: mockGame.board_state,
+          sequences: [],
+          selectedCard: mockCard,
+          isMyTurn: true,
+          setGame: vi.fn(),
+          setBoardState: vi.fn(),
+          setSequences: vi.fn(),
+          setMyHand: vi.fn(),
+          setSelectedCard: vi.fn(),
+          setHighlightedPositions: vi.fn(),
+        }
+        return selector(state)
+      })
 
       const { result } = renderHook(() => useGame())
 
