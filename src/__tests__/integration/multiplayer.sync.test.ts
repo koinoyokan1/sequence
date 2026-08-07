@@ -94,7 +94,7 @@ describe('Multiplayer Synchronization - Integration Tests', () => {
     }
 
     // Mock Supabase RPC - updates shared database state
-    vi.mocked(supabase.rpc).mockImplementation(async (name, params: any) => {
+    vi.mocked(supabase.rpc).mockImplementation((async (name: string, params: any) => {
       if (name === 'play_card_optimized') {
         // Update database state
         databaseState.game.current_turn = params.p_next_turn
@@ -117,7 +117,7 @@ describe('Multiplayer Synchronization - Integration Tests', () => {
         return { data: [{ success: true }], error: null }
       }
       return { data: null, error: null }
-    })
+    }) as any)
 
     // Mock deck fetch
     vi.mocked(supabase.from).mockReturnValue({
@@ -137,7 +137,7 @@ describe('Multiplayer Synchronization - Integration Tests', () => {
 
     // Mock realtime channel
     const mockChannel = {
-      on: vi.fn((event, config, callback) => {
+      on: vi.fn((_event, config, callback) => {
         const key = `${config.table}_${config.event}`
         realtimeCallbacks[key] = callback
         return mockChannel
@@ -148,7 +148,7 @@ describe('Multiplayer Synchronization - Integration Tests', () => {
       }),
     }
 
-    vi.mocked(supabase).channel = vi.fn(() => mockChannel)
+    vi.mocked(supabase).channel = vi.fn(() => mockChannel) as any
     vi.mocked(supabase).removeChannel = vi.fn()
   })
 

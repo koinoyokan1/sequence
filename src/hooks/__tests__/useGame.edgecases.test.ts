@@ -108,10 +108,10 @@ describe('useGame - Edge Cases and Corner Cases', () => {
         }),
       } as any)
 
-      vi.mocked(supabase.rpc).mockImplementation(() => 
-        new Promise((_, reject) => 
+      vi.mocked(supabase.rpc).mockImplementation(() =>
+        new Promise((_, reject) =>
           setTimeout(() => reject(new Error('Timeout')), 100)
-        )
+        ) as any
       )
 
       const { result } = renderHook(() => useGame())

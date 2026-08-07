@@ -43,7 +43,7 @@ describe('useRealtime - Multi-Client Synchronization', () => {
 
     // Mock Supabase realtime channel
     const mockChannel = {
-      on: vi.fn((event, config, callback) => {
+      on: vi.fn((_event, config, callback) => {
         const key = `${config.table}_${config.event}`
         realtimeCallbacks[key] = callback
         return mockChannel
@@ -56,7 +56,7 @@ describe('useRealtime - Multi-Client Synchronization', () => {
       }),
     }
 
-    vi.mocked(supabase).channel = vi.fn(() => mockChannel)
+    vi.mocked(supabase).channel = vi.fn(() => mockChannel) as any
     vi.mocked(supabase).removeChannel = vi.fn()
     vi.mocked(supabase).from = vi.fn().mockReturnValue({
       select: vi.fn().mockReturnValue({

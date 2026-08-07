@@ -4,7 +4,7 @@
  */
 
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
-import { renderHook, act, waitFor } from '@testing-library/react'
+import { renderHook, act } from '@testing-library/react'
 import { useGame } from '../useGame'
 import { useGameStore } from '@/stores/gameStore'
 import { useUIStore } from '@/stores/uiStore'
@@ -238,12 +238,12 @@ describe('useGame - Realtime Synchronization Tests', () => {
       vi.mocked(supabase.rpc).mockImplementation(() => {
         const currentCall = ++callCount
         const delay = Math.random() * 100 // Random delay 0-100ms
-        return new Promise(resolve => 
+        return new Promise(resolve =>
           setTimeout(() => {
             rpcCallOrder.push(currentCall)
             resolve({ data: [{ success: true }], error: null })
           }, delay)
-        )
+        ) as any
       })
 
       vi.mocked(supabase.from).mockReturnValue({
@@ -257,7 +257,7 @@ describe('useGame - Realtime Synchronization Tests', () => {
         }),
       } as any)
 
-      const { result, rerender } = renderHook(() => useGame())
+      const { result } = renderHook(() => useGame())
 
       // Simulate 3 rapid moves
       const moves = [
@@ -308,7 +308,7 @@ describe('useGame - Realtime Synchronization Tests', () => {
       vi.mocked(supabase.rpc).mockImplementation(() => {
         return new Promise(resolve => {
           rpcCallbacks.push(() => resolve({ data: [{ success: true }], error: null }))
-        })
+        }) as any
       })
 
       vi.mocked(supabase.from).mockReturnValue({
