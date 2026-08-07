@@ -5,8 +5,10 @@ import { CreateGame } from '@/pages/CreateGame'
 import { JoinGame } from '@/pages/JoinGame'
 import { Lobby } from '@/pages/Lobby'
 import { Game } from '@/pages/Game'
+import { Credits } from '@/pages/Credits'
 import { ToastContainer } from '@/components/ui/Toast'
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
+import { Footer } from '@/components/ui/Footer'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -28,10 +30,12 @@ function App() {
             <Route path="/join" element={<JoinGame />} />
             <Route path="/lobby/:gameId" element={<Lobby />} />
             <Route path="/game/:gameId" element={<Game />} />
+            <Route path="/credits" element={<Credits />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
           <ToastContainer />
           <LoadingSpinner />
+          <Footer />
         </div>
       </BrowserRouter>
     </QueryClientProvider>
