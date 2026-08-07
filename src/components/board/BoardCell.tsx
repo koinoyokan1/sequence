@@ -42,14 +42,14 @@ export function BoardCell({ cell, highlighted, onClick }: BoardCellProps) {
       {/* Card display - background changes to team color when chip is placed */}
       {!cell.isFreeSpace && cell.card && (
         <div className={clsx(
-          'absolute inset-0 flex flex-col items-center justify-center p-1 rounded',
+          'absolute inset-0 flex flex-col items-center justify-center p-0.5 sm:p-1 rounded overflow-hidden',
           !cell.chip && 'bg-white',
-          cell.chip === 1 && 'bg-team-1 border-4 border-red-800',
-          cell.chip === 2 && 'bg-team-2 border-4 border-blue-800',
-          inSequence && 'ring-4 ring-yellow-400'
+          cell.chip === 1 && 'bg-team-1 border-2 sm:border-4 border-red-800',
+          cell.chip === 2 && 'bg-team-2 border-2 sm:border-4 border-blue-800',
+          inSequence && 'ring-2 sm:ring-4 ring-yellow-400'
         )}>
           <div className={clsx(
-            'text-xs font-bold',
+            'text-[0.5rem] sm:text-xs font-bold leading-tight',
             cell.chip
               ? 'text-white'
               : isRed ? 'text-red-600' : 'text-gray-900'
@@ -57,7 +57,7 @@ export function BoardCell({ cell, highlighted, onClick }: BoardCellProps) {
             {cell.card.rank}
           </div>
           <div className={clsx(
-            'text-lg',
+            'text-sm sm:text-lg leading-none',
             cell.chip
               ? 'text-white'
               : isRed ? 'text-red-600' : 'text-gray-900'

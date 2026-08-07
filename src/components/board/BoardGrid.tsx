@@ -20,7 +20,7 @@ export function BoardGrid() {
   }
   
   return (
-    <div className="grid grid-cols-10 gap-1 p-4 bg-gray-900 rounded-xl shadow-2xl max-w-4xl mx-auto">
+    <div className="grid grid-cols-10 gap-0.5 sm:gap-1 p-2 sm:p-4 bg-gray-900 rounded-xl shadow-2xl max-w-4xl mx-auto">
       {boardState.map((row, y) =>
         row.map((cell, x) => (
           <BoardCell
