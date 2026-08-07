@@ -124,7 +124,8 @@ export function useGame() {
       setMyHand(finalHand)
 
       // SINGLE RPC CALL: Update everything in one transaction
-      await supabase.rpc('play_card_optimized', {
+      console.log('Calling play_card_optimized RPC...')
+      const { data: rpcData, error: rpcError } = await supabase.rpc('play_card_optimized', {
         p_game_id: gameId,
         p_player_id: playerId,
         p_new_board_state: newBoard,
@@ -136,6 +137,13 @@ export function useGame() {
         p_new_discard_pile: newDiscardPile,
         p_new_hand: finalHand,
       })
+
+      if (rpcError) {
+        console.error('RPC Error:', rpcError)
+        throw rpcError
+      }
+
+      console.log('RPC Success:', rpcData)
 
       // Show success feedback
       if (gameOver) {
