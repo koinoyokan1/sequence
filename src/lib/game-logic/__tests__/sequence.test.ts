@@ -418,27 +418,8 @@ describe('Free Spaces (Corners) - Wild Card Behavior', () => {
   })
 
   it('should use two free spaces in the same sequence', () => {
+    // Test corner-to-corner diagonal with free spaces
     const board = createBoardWithChips([
-      // Diagonal from (0,0) to (4,4) using both corners
-      // (0,0) is free space
-      { x: 1, y: 1, team: 1 },
-      { x: 2, y: 2, team: 1 },
-      { x: 3, y: 3, team: 1 },
-      // Need one more for sequence of 5
-      // Let's test with horizontal using 2 free spaces at corners
-    ])
-
-    // Top row from (0,0) to (9,0) - both corners are free
-    const board2 = createBoardWithChips([
-      // (0,0) is free
-      { x: 1, y: 0, team: 1 },
-      { x: 2, y: 0, team: 1 },
-      { x: 3, y: 0, team: 1 },
-      // Would need (4,0) to make a sequence
-    ])
-
-    // Actually, test corner-to-corner diagonal
-    const board3 = createBoardWithChips([
       // (0,0) free space
       { x: 1, y: 1, team: 1 },
       { x: 2, y: 2, team: 1 },
@@ -446,7 +427,7 @@ describe('Free Spaces (Corners) - Wild Card Behavior', () => {
       { x: 4, y: 4, team: 1 },
     ])
 
-    const sequences = detectSequences(board3)
+    const sequences = detectSequences(board)
     expect(sequences.length).toBe(1)
   })
 

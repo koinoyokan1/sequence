@@ -530,8 +530,6 @@ describe('CAT_NET: Multiplayer, State Sync & Edge Cases (4 tests)', () => {
         { x: 2, y: 2, team: 2 },
       ])
 
-      const sequences = detectSequences(board)
-
       // Simulate state save/restore
       const savedState = JSON.parse(JSON.stringify(board))
 
