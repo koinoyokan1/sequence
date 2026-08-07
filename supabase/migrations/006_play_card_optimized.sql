@@ -12,6 +12,8 @@ CREATE OR REPLACE FUNCTION play_card_optimized(
   p_new_hand JSONB
 )
 RETURNS TABLE (success BOOLEAN) AS $$
+DECLARE
+  v_rows_updated INTEGER;
 BEGIN
   -- Update game state
   UPDATE games
@@ -24,6 +26,9 @@ BEGIN
     winner_team = CASE WHEN p_game_over THEN p_winner_team ELSE winner_team END
   WHERE id = p_game_id;
 
+  GET DIAGNOSTICS v_rows_updated = ROW_COUNT;
+  RAISE LOG 'Updated % game rows for game_id %', v_rows_updated, p_game_id;
+
   -- Update deck
   UPDATE game_decks
   SET
@@ -31,11 +36,17 @@ BEGIN
     discard_pile = p_new_discard_pile
   WHERE game_id = p_game_id;
 
+  GET DIAGNOSTICS v_rows_updated = ROW_COUNT;
+  RAISE LOG 'Updated % deck rows for game_id %', v_rows_updated, p_game_id;
+
   -- Update player hand
   UPDATE player_hands
   SET cards = p_new_hand
   WHERE player_id = p_player_id;
 
+  GET DIAGNOSTICS v_rows_updated = ROW_COUNT;
+  RAISE LOG 'Updated % hand rows for player_id %', v_rows_updated, p_player_id;
+
   RETURN QUERY SELECT true;
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
