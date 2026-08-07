@@ -64,8 +64,8 @@ export function CardHand() {
   const isDead = selectedCard && isCardDead(boardState, selectedCard)
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-gradient-to-t from-gray-900 to-transparent p-4">
-      <div className="max-w-screen-xl mx-auto">
+    <div className="fixed bottom-12 left-0 right-0 bg-gradient-to-t from-gray-900 to-transparent p-4 pointer-events-none">
+      <div className="max-w-screen-xl mx-auto pointer-events-auto">
         {canDiscard && isMyTurn && (
           <div className="text-center mb-2">
             <Button
