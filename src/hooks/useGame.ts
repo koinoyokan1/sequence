@@ -7,6 +7,7 @@ import { validateMove } from '@/lib/game-logic/moves'
 import { placeChip, removeChip } from '@/lib/game-logic/board'
 import { detectSequences, hasWon } from '@/lib/game-logic/sequence'
 import { removeCardFromHand, drawCardWithReshuffle, addToDiscardPile } from '@/lib/game-logic/cards'
+import { playCardPlaceSound, playWinSound } from '@/utils/sounds'
 
 export function useGame() {
   const gameId = useGameStore(state => state.gameId)
@@ -133,11 +134,16 @@ export function useGame() {
       setMyHand(finalHand)
       setSelectedCard(null)
       setHighlightedPositions([])
-      
+
+      // Play sound effects
       if (gameOver) {
+        playWinSound()
         addToast('You won! 🎉', 'success')
-      } else if (reshuffleMessage) {
-        addToast(reshuffleMessage + 'Card played!', 'info')
+      } else {
+        playCardPlaceSound()
+        if (reshuffleMessage) {
+          addToast(reshuffleMessage + 'Card played!', 'info')
+        }
       }
     } catch (error) {
       console.error('Error playing card:', error)

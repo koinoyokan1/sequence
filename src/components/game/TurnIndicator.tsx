@@ -1,13 +1,24 @@
+import { useEffect, useRef } from 'react'
 import { useGameStore } from '@/stores/gameStore'
 import { motion } from 'framer-motion'
+import { playTurnNotification } from '@/utils/sounds'
 
 export function TurnIndicator() {
   const game = useGameStore(state => state.game)
   const players = useGameStore(state => state.players)
   const isMyTurn = useGameStore(state => state.isMyTurn)
-  
+  const prevIsMyTurn = useRef(isMyTurn)
+
+  // Play sound when it becomes player's turn
+  useEffect(() => {
+    if (isMyTurn && !prevIsMyTurn.current) {
+      playTurnNotification()
+    }
+    prevIsMyTurn.current = isMyTurn
+  }, [isMyTurn])
+
   if (!game || players.length === 0) return null
-  
+
   const currentPlayer = players.find(p => p.position === game.current_turn)
   
   return (
