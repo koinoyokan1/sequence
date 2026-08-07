@@ -30,12 +30,19 @@ export function useRealtime(gameId: string | null) {
           filter: `id=eq.${gameId}`,
         },
         (payload) => {
+          console.log('Game update received via realtime:', payload.eventType)
           if (payload.new) {
             const newGameData = payload.new as any
 
             // Check if this is newer data (higher turn number = more recent)
             // This prevents race conditions where realtime fires before DB commit
             if (newGameData.current_turn >= lastSeenTurnRef.current) {
+              console.log('Applying realtime game update:', {
+                turn: newGameData.current_turn,
+                previousTurn: lastSeenTurnRef.current,
+                boardState: !!newGameData.board_state,
+                sequences: newGameData.sequences?.length || 0
+              })
               lastSeenTurnRef.current = newGameData.current_turn
 
               // Update all game state
@@ -52,7 +59,9 @@ export function useRealtime(gameId: string | null) {
           }
         }
       )
-      .subscribe()
+      .subscribe((status) => {
+        console.log('Game channel subscription status:', status)
+      })
     
     channels.push(gameChannel)
     

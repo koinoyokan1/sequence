@@ -20,7 +20,8 @@ export function useGame() {
   const sequences = useGameStore(state => state.sequences)
   const selectedCard = useGameStore(state => state.selectedCard)
   const isMyTurn = useGameStore(state => state.isMyTurn)
-  
+
+  const setGame = useGameStore(state => state.setGame)
   const setMyHand = useGameStore(state => state.setMyHand)
   const setBoardState = useGameStore(state => state.setBoardState)
   const setSequences = useGameStore(state => state.setSequences)
@@ -62,12 +63,25 @@ export function useGame() {
     const gameOver = hasWon(newSequences, currentPlayer.team, sequencesRequired)
     const nextTurn = (game.current_turn + 1) % playerCount
 
-    // OPTIMISTIC UPDATE: Update UI immediately
+    // OPTIMISTIC UPDATE: Update UI immediately (before database sync)
+    // This makes the game feel instant for the current player
     setBoardState(newBoard)
     setSequences(newSequences)
     setSelectedCard(null)
     setHighlightedPositions([])
     playCardPlaceSound()
+
+    // Also update the game object to reflect the new turn
+    // This ensures turn indicator updates immediately
+    const updatedGame = {
+      ...game,
+      board_state: newBoard,
+      sequences: newSequences,
+      current_turn: nextTurn,
+      status: gameOver ? ('finished' as const) : game.status,
+      winner_team: gameOver ? currentPlayer.team : game.winner_team,
+    }
+    setGame(updatedGame)
 
     // Show loading indicator for background sync
     setLoading(true, 'Syncing...')
@@ -135,6 +149,7 @@ export function useGame() {
       addToast('Failed to play card', 'error')
 
       // Revert optimistic updates on error
+      setGame(game)
       setBoardState(boardState)
       setSequences(sequences)
       setMyHand(myHand)
@@ -143,7 +158,7 @@ export function useGame() {
       setLoading(false)
     }
   }, [gameId, playerId, game, selectedCard, isMyTurn, players, boardState, sequences, myHand,
-      setBoardState, setSequences, setMyHand, setSelectedCard, setHighlightedPositions, addToast, setLoading])
+      setGame, setBoardState, setSequences, setMyHand, setSelectedCard, setHighlightedPositions, addToast, setLoading])
   
   const discardCard = useCallback(async (card: Card) => {
     if (!gameId || !playerId || !game || !isMyTurn) {
