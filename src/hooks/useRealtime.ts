@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { supabase } from '@/lib/supabase'
 import { useGameStore } from '@/stores/gameStore'
 import type { RealtimeChannel } from '@supabase/supabase-js'
@@ -8,6 +8,9 @@ export function useRealtime(gameId: string | null) {
   const setPlayers = useGameStore(state => state.setPlayers)
   const setBoardState = useGameStore(state => state.setBoardState)
   const setSequences = useGameStore(state => state.setSequences)
+
+  // Track the current turn to detect if we're getting stale data
+  const lastSeenTurnRef = useRef<number>(-1)
   
   useEffect(() => {
     if (!gameId) return
@@ -27,9 +30,24 @@ export function useRealtime(gameId: string | null) {
         },
         (payload) => {
           if (payload.new) {
-            setGame(payload.new as any)
-            setBoardState((payload.new as any).board_state)
-            setSequences((payload.new as any).sequences)
+            const newGameData = payload.new as any
+
+            // Check if this is newer data (higher turn number = more recent)
+            // This prevents race conditions where realtime fires before DB commit
+            if (newGameData.current_turn >= lastSeenTurnRef.current) {
+              lastSeenTurnRef.current = newGameData.current_turn
+
+              // Update all game state
+              setGame(newGameData)
+              setBoardState(newGameData.board_state)
+              setSequences(newGameData.sequences || [])
+            } else {
+              // Stale data - ignore this update
+              console.log('Ignoring stale realtime update', {
+                current: lastSeenTurnRef.current,
+                incoming: newGameData.current_turn
+              })
+            }
           }
         }
       )
