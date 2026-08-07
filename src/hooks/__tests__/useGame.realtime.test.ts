@@ -48,25 +48,28 @@ describe('useGame - Realtime Synchronization Tests', () => {
 
   beforeEach(() => {
     vi.clearAllMocks()
-    
-    // Setup default store mocks
-    vi.mocked(useGameStore).mockReturnValue({
-      gameId: mockGameId,
-      playerId: mockPlayerId,
-      game: mockGame,
-      players: mockPlayers,
-      myHand: [mockCard],
-      boardState: mockGame.board_state,
-      sequences: [],
-      selectedCard: mockCard,
-      isMyTurn: true,
-      setGame: vi.fn(),
-      setBoardState: vi.fn(),
-      setSequences: vi.fn(),
-      setMyHand: vi.fn(),
-      setSelectedCard: vi.fn(),
-      setHighlightedPositions: vi.fn(),
-    } as any)
+
+    // Setup default store mocks - use selector pattern
+    vi.mocked(useGameStore).mockImplementation((selector: any) => {
+      const state = {
+        gameId: mockGameId,
+        playerId: mockPlayerId,
+        game: mockGame,
+        players: mockPlayers,
+        myHand: [mockCard],
+        boardState: mockGame.board_state,
+        sequences: [],
+        selectedCard: mockCard,
+        isMyTurn: true,
+        setGame: vi.fn(),
+        setBoardState: vi.fn(),
+        setSequences: vi.fn(),
+        setMyHand: vi.fn(),
+        setSelectedCard: vi.fn(),
+        setHighlightedPositions: vi.fn(),
+      }
+      return selector(state)
+    })
   })
 
   afterEach(() => {
@@ -78,13 +81,27 @@ describe('useGame - Realtime Synchronization Tests', () => {
       const setBoardState = vi.fn()
       const setSequences = vi.fn()
       const setGame = vi.fn()
-      
-      vi.mocked(useGameStore).mockReturnValue({
-        ...vi.mocked(useGameStore)(),
-        setBoardState,
-        setSequences,
-        setGame,
-      } as any)
+
+      vi.mocked(useGameStore).mockImplementation((selector: any) => {
+        const state = {
+          gameId: mockGameId,
+          playerId: mockPlayerId,
+          game: mockGame,
+          players: mockPlayers,
+          myHand: [mockCard],
+          boardState: mockGame.board_state,
+          sequences: [],
+          selectedCard: mockCard,
+          isMyTurn: true,
+          setBoardState,
+          setSequences,
+          setGame,
+          setMyHand: vi.fn(),
+          setSelectedCard: vi.fn(),
+          setHighlightedPositions: vi.fn(),
+        }
+        return selector(state)
+      })
 
       // Mock RPC to be slow (500ms)
       const rpcMock = vi.fn().mockImplementation(() => 
@@ -125,15 +142,27 @@ describe('useGame - Realtime Synchronization Tests', () => {
       const setBoardState = vi.fn()
       const setSequences = vi.fn()
       const setGame = vi.fn()
-      
-      vi.mocked(useGameStore).mockReturnValue({
-        ...vi.mocked(useGameStore)(),
-        setBoardState,
-        setSequences,
-        setGame,
-        boardState: originalBoard,
-        sequences: originalSequences,
-      } as any)
+
+      vi.mocked(useGameStore).mockImplementation((selector: any) => {
+        const state = {
+          gameId: mockGameId,
+          playerId: mockPlayerId,
+          game: mockGame,
+          players: mockPlayers,
+          myHand: [mockCard],
+          boardState: originalBoard,
+          sequences: originalSequences,
+          selectedCard: mockCard,
+          isMyTurn: true,
+          setBoardState,
+          setSequences,
+          setGame,
+          setMyHand: vi.fn(),
+          setSelectedCard: vi.fn(),
+          setHighlightedPositions: vi.fn(),
+        }
+        return selector(state)
+      })
 
       // Mock RPC to fail
       vi.mocked(supabase.rpc).mockResolvedValue({
@@ -173,11 +202,27 @@ describe('useGame - Realtime Synchronization Tests', () => {
     it('should handle rapid successive moves without state corruption', async () => {
       const setBoardState = vi.fn()
       const rpcCallOrder: number[] = []
-      
-      vi.mocked(useGameStore).mockReturnValue({
-        ...vi.mocked(useGameStore)(),
-        setBoardState,
-      } as any)
+
+      vi.mocked(useGameStore).mockImplementation((selector: any) => {
+        const state = {
+          gameId: mockGameId,
+          playerId: mockPlayerId,
+          game: mockGame,
+          players: mockPlayers,
+          myHand: [mockCard],
+          boardState: mockGame.board_state,
+          sequences: [],
+          selectedCard: mockCard,
+          isMyTurn: true,
+          setBoardState,
+          setGame: vi.fn(),
+          setSequences: vi.fn(),
+          setMyHand: vi.fn(),
+          setSelectedCard: vi.fn(),
+          setHighlightedPositions: vi.fn(),
+        }
+        return selector(state)
+      })
 
       // Mock RPC with random delays to simulate race conditions
       let callCount = 0
@@ -229,10 +274,26 @@ describe('useGame - Realtime Synchronization Tests', () => {
       const setGame = vi.fn()
       let rpcCallbacks: Array<() => void> = []
 
-      vi.mocked(useGameStore).mockReturnValue({
-        ...vi.mocked(useGameStore)(),
-        setGame,
-      } as any)
+      vi.mocked(useGameStore).mockImplementation((selector: any) => {
+        const state = {
+          gameId: mockGameId,
+          playerId: mockPlayerId,
+          game: mockGame,
+          players: mockPlayers,
+          myHand: [mockCard],
+          boardState: mockGame.board_state,
+          sequences: [],
+          selectedCard: mockCard,
+          isMyTurn: true,
+          setGame,
+          setBoardState: vi.fn(),
+          setSequences: vi.fn(),
+          setMyHand: vi.fn(),
+          setSelectedCard: vi.fn(),
+          setHighlightedPositions: vi.fn(),
+        }
+        return selector(state)
+      })
 
       // Mock RPC to capture completion callbacks
       vi.mocked(supabase.rpc).mockImplementation(() => {
@@ -281,11 +342,26 @@ describe('useGame - Realtime Synchronization Tests', () => {
       const setGame = vi.fn()
       const setBoardState = vi.fn()
 
-      vi.mocked(useGameStore).mockReturnValue({
-        ...vi.mocked(useGameStore)(),
-        setGame,
-        setBoardState,
-      } as any)
+      vi.mocked(useGameStore).mockImplementation((selector: any) => {
+        const state = {
+          gameId: mockGameId,
+          playerId: mockPlayerId,
+          game: mockGame,
+          players: mockPlayers,
+          myHand: [mockCard],
+          boardState: mockGame.board_state,
+          sequences: [],
+          selectedCard: mockCard,
+          isMyTurn: true,
+          setGame,
+          setBoardState,
+          setSequences: vi.fn(),
+          setMyHand: vi.fn(),
+          setSelectedCard: vi.fn(),
+          setHighlightedPositions: vi.fn(),
+        }
+        return selector(state)
+      })
 
       vi.mocked(supabase.from).mockReturnValue({
         select: vi.fn().mockReturnValue({

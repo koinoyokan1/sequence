@@ -42,32 +42,38 @@ describe('useGame - Edge Cases and Corner Cases', () => {
 
   beforeEach(() => {
     vi.clearAllMocks()
-    
+
     mockAddToast = vi.fn()
     mockSetLoading = vi.fn()
 
-    vi.mocked(useGameStore).mockReturnValue({
-      gameId: mockGameId,
-      playerId: mockPlayerId,
-      game: mockGame,
-      players: mockPlayers,
-      myHand: [mockCard],
-      boardState: mockGame.board_state,
-      sequences: [],
-      selectedCard: mockCard,
-      isMyTurn: true,
-      setGame: vi.fn(),
-      setBoardState: vi.fn(),
-      setSequences: vi.fn(),
-      setMyHand: vi.fn(),
-      setSelectedCard: vi.fn(),
-      setHighlightedPositions: vi.fn(),
-    } as any)
+    vi.mocked(useGameStore).mockImplementation((selector: any) => {
+      const state = {
+        gameId: mockGameId,
+        playerId: mockPlayerId,
+        game: mockGame,
+        players: mockPlayers,
+        myHand: [mockCard],
+        boardState: mockGame.board_state,
+        sequences: [],
+        selectedCard: mockCard,
+        isMyTurn: true,
+        setGame: vi.fn(),
+        setBoardState: vi.fn(),
+        setSequences: vi.fn(),
+        setMyHand: vi.fn(),
+        setSelectedCard: vi.fn(),
+        setHighlightedPositions: vi.fn(),
+      }
+      return selector(state)
+    })
 
-    vi.mocked(useUIStore).mockReturnValue({
-      addToast: mockAddToast,
-      setLoading: mockSetLoading,
-    } as any)
+    vi.mocked(useUIStore).mockImplementation((selector: any) => {
+      const state = {
+        addToast: mockAddToast,
+        setLoading: mockSetLoading,
+      }
+      return selector(state)
+    })
   })
 
   describe('Network Failures', () => {
