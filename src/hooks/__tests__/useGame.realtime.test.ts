@@ -7,6 +7,7 @@ import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 import { renderHook, act, waitFor } from '@testing-library/react'
 import { useGame } from '../useGame'
 import { useGameStore } from '@/stores/gameStore'
+import { useUIStore } from '@/stores/uiStore'
 import { supabase } from '@/lib/supabase'
 
 // Mock Supabase

@@ -8,6 +8,7 @@ import { renderHook, act, waitFor } from '@testing-library/react'
 import { useGame } from '@/hooks/useGame'
 import { useRealtime } from '@/hooks/useRealtime'
 import { useGameStore } from '@/stores/gameStore'
+import { useUIStore } from '@/stores/uiStore'
 import { supabase } from '@/lib/supabase'
 
 vi.mock('@/lib/supabase')
