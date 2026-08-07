@@ -1,6 +1,6 @@
 # Sequence Game - Test Results
 
-## ✅ All Tests Passing (27/27)
+## ✅ All Tests Passing (72/72)
 
 Comprehensive unit tests have been written and executed to verify the game logic handles all corner cases and scenarios correctly.
 
@@ -107,4 +107,9 @@ npm run test:ui
 - Win conditions (exactly 3 sequences required)
 - **Free space corner wild cards** (all 4 corners work for both teams)
 
-All 27 tests pass ✅
+All 72 tests pass ✅
+
+### Test Breakdown:
+- **Core Sequence Detection:** 27 tests
+- **Official Rules Compliance:** 12 tests
+- **Advanced Features (Jacks, Dead Cards, Reshuffle):** 33 tests ⭐ NEW

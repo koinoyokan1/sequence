@@ -6,7 +6,7 @@ import type { Card, Position } from '@/types/game'
 import { validateMove } from '@/lib/game-logic/moves'
 import { placeChip, removeChip } from '@/lib/game-logic/board'
 import { detectSequences, hasWon } from '@/lib/game-logic/sequence'
-import { removeCardFromHand, drawCard } from '@/lib/game-logic/cards'
+import { removeCardFromHand, drawCardWithReshuffle, addToDiscardPile } from '@/lib/game-logic/cards'
 
 export function useGame() {
   const gameId = useGameStore(state => state.gameId)
@@ -58,22 +58,42 @@ export function useGame() {
       // Remove card from hand
       const newHand = removeCardFromHand(myHand, selectedCard.id)
       
-      // Draw new card from deck
+      // Draw new card from deck (with automatic reshuffle)
       const { data: deckData } = await supabase
         .from('game_decks')
-        .select('draw_pile')
+        .select('draw_pile, discard_pile')
         .eq('game_id', gameId)
         .single()
 
       let drawnCard: Card | null = null
-      if (deckData && 'draw_pile' in deckData && Array.isArray(deckData.draw_pile) && deckData.draw_pile.length > 0) {
-        const { card, remainingDeck } = drawCard(deckData.draw_pile as Card[])
+      let reshuffleMessage = ''
+
+      if (deckData && 'draw_pile' in deckData && 'discard_pile' in deckData) {
+        const drawPile = (deckData.draw_pile as Card[]) || []
+        const discardPile = (deckData.discard_pile as Card[]) || []
+
+        // Add played card to discard pile
+        const updatedDiscardPile = addToDiscardPile(discardPile, selectedCard)
+
+        // Draw with reshuffle
+        const { card, newDrawPile, newDiscardPile, reshuffled } = drawCardWithReshuffle(
+          drawPile,
+          updatedDiscardPile
+        )
+
         drawnCard = card
-        
+
+        if (reshuffled) {
+          reshuffleMessage = 'Deck reshuffled! '
+        }
+
         // Update deck
         await supabase
           .from('game_decks')
-          .update({ draw_pile: remainingDeck })
+          .update({
+            draw_pile: newDrawPile,
+            discard_pile: newDiscardPile
+          })
           .eq('game_id', gameId)
       }
       
@@ -116,6 +136,8 @@ export function useGame() {
       
       if (gameOver) {
         addToast('You won! 🎉', 'success')
+      } else if (reshuffleMessage) {
+        addToast(reshuffleMessage + 'Card played!', 'info')
       }
     } catch (error) {
       console.error('Error playing card:', error)
@@ -135,28 +157,48 @@ export function useGame() {
     const currentPlayer = players.find(p => p.id === playerId)
     if (!currentPlayer) return
 
-    setLoading(true, 'Discarding card...')
+    setLoading(true, 'Discarding dead card...')
 
     try {
       // Remove card from hand
       const newHand = removeCardFromHand(myHand, card.id)
 
-      // Draw new card from deck
+      // Draw new card from deck (with automatic reshuffle)
       const { data: deckData } = await supabase
         .from('game_decks')
-        .select('draw_pile')
+        .select('draw_pile, discard_pile')
         .eq('game_id', gameId)
         .single()
 
       let drawnCard: Card | null = null
-      if (deckData && 'draw_pile' in deckData && Array.isArray(deckData.draw_pile) && deckData.draw_pile.length > 0) {
-        const { card: newCard, remainingDeck } = drawCard(deckData.draw_pile as Card[])
+      let reshuffleMessage = ''
+
+      if (deckData && 'draw_pile' in deckData && 'discard_pile' in deckData) {
+        const drawPile = (deckData.draw_pile as Card[]) || []
+        const discardPile = (deckData.discard_pile as Card[]) || []
+
+        // Add discarded card to discard pile
+        const updatedDiscardPile = addToDiscardPile(discardPile, card)
+
+        // Draw with reshuffle
+        const { card: newCard, newDrawPile, newDiscardPile, reshuffled } = drawCardWithReshuffle(
+          drawPile,
+          updatedDiscardPile
+        )
+
         drawnCard = newCard
+
+        if (reshuffled) {
+          reshuffleMessage = 'Deck reshuffled! '
+        }
 
         // Update deck
         await supabase
           .from('game_decks')
-          .update({ draw_pile: remainingDeck })
+          .update({
+            draw_pile: newDrawPile,
+            discard_pile: newDiscardPile
+          })
           .eq('game_id', gameId)
       }
 
@@ -188,7 +230,7 @@ export function useGame() {
       setSelectedCard(null)
       setHighlightedPositions([])
 
-      addToast('Card discarded', 'info')
+      addToast(reshuffleMessage + 'Dead card discarded and replaced', 'info')
     } catch (error) {
       console.error('Error discarding card:', error)
       addToast('Failed to discard card', 'error')

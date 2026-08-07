@@ -68,11 +68,68 @@ export function drawCard(deck: Card[]): { card: Card | null; remainingDeck: Card
   if (deck.length === 0) {
     return { card: null, remainingDeck: [] }
   }
-  
+
   return {
     card: deck[0],
     remainingDeck: deck.slice(1),
   }
+}
+
+/**
+ * Draw a card from the deck, reshuffling the discard pile if needed
+ * @param drawPile - Current draw pile
+ * @param discardPile - Current discard pile
+ * @returns Object with drawn card, new draw pile, and new discard pile
+ */
+export function drawCardWithReshuffle(
+  drawPile: Card[],
+  discardPile: Card[]
+): {
+  card: Card | null
+  newDrawPile: Card[]
+  newDiscardPile: Card[]
+  reshuffled: boolean
+} {
+  // If draw pile has cards, draw normally
+  if (drawPile.length > 0) {
+    const { card, remainingDeck } = drawCard(drawPile)
+    return {
+      card,
+      newDrawPile: remainingDeck,
+      newDiscardPile: discardPile,
+      reshuffled: false,
+    }
+  }
+
+  // If draw pile is empty but discard pile has cards, reshuffle
+  if (discardPile.length > 0) {
+    const shuffledDiscard = shuffleDeck(discardPile)
+    const { card, remainingDeck } = drawCard(shuffledDiscard)
+    return {
+      card,
+      newDrawPile: remainingDeck,
+      newDiscardPile: [],
+      reshuffled: true,
+    }
+  }
+
+  // Both piles are empty - no cards available
+  return {
+    card: null,
+    newDrawPile: [],
+    newDiscardPile: [],
+    reshuffled: false,
+  }
+}
+
+/**
+ * Add a card to the discard pile
+ * @param discardPile - Current discard pile
+ * @param card - Card to discard
+ * @returns New discard pile
+ */
+export function addToDiscardPile(discardPile: Card[], card: Card): Card[] {
+  return [...discardPile, card]
 }
 
 export function getJackType(card: Card): JackType {

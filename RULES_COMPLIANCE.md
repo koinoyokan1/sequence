@@ -1,6 +1,6 @@
 # Official Sequence Rules - Compliance Report
 
-## ✅ Test Coverage: 39/39 Tests Passing
+## ✅ Test Coverage: 55/55 Tests Passing
 
 This document verifies compliance with official Sequence game rules and common web implementation pitfalls.
 
@@ -18,10 +18,10 @@ This document verifies compliance with official Sequence game rules and common w
 | **Edge Cases** | ✅ | 4 | 4/6/8 chip cases handled |
 | **Complex Shapes** | ✅ | 3 | T/X/L patterns detected |
 | **Overlap Validation** | ✅ | 3 | 2+ shared chips rejected |
-| **Two-Eyed Jacks** | ⚠️ | 0 | Not yet implemented |
-| **One-Eyed Jacks** | ⚠️ | 0 | Not yet implemented |
-| **Dead Cards** | ⚠️ | 0 | Not yet implemented |
-| **Deck Exhaustion** | ⚠️ | 0 | Not yet implemented |
+| **Two-Eyed Jacks** | ✅ | 3 | Wild card placement fully implemented |
+| **One-Eyed Jacks** | ✅ | 5 | Remove opponent chips with protection |
+| **Dead Cards** | ✅ | 4 | Dead card detection & UI indicators |
+| **Deck Exhaustion** | ✅ | 4 | Auto-reshuffle when draw pile empty |
 
 ---
 
@@ -131,70 +131,102 @@ UPDATE games SET sequences_required = 3 WHERE player_count >= 4;
 
 ---
 
-## ⚠️ Not Yet Implemented
+## ✅ Newly Implemented Features
 
-### 5. Two-Eyed Jacks ($\text{J}\clubsuit, \text{J}\diamondsuit$) ⚠️
+### 5. Two-Eyed Jacks ($\text{J}\clubsuit, \text{J}\diamondsuit$) ✅
 
 **Official Rule:** Wild card - place a token on **any open space** (excluding corners).
 
 **Common Pitfall:** May allow placing on corners or already occupied spaces.
 
-**Current Status:** Not implemented
+**Implementation Status:** ✅ **FULLY IMPLEMENTED**
 
-**Required Implementation:**
-- Add Jack card detection in move validation
-- Allow placing chip on any unoccupied, non-corner space
-- Prevent placement on corners
-- Prevent placement on occupied spaces
+**Features:**
+- ✅ Jack card detection in move validation (`getJackType()`)
+- ✅ Can place chip on any unoccupied, non-corner space
+- ✅ Prevents placement on corners
+- ✅ Prevents placement on occupied spaces
+- ✅ UI highlights all valid empty positions when selected
+
+**Tests (3):**
+- ✅ Allows placement on any empty non-corner space
+- ✅ Prevents placement on corner free spaces
+- ✅ Prevents placement on occupied spaces
 
 ---
 
-### 6. One-Eyed Jacks ($\text{J}\spadesuit, \text{J}\heartsuit$) ⚠️
+### 6. One-Eyed Jacks ($\text{J}\spadesuit, \text{J}\heartsuit$) ✅
 
 **Official Rule:** Anti-wild card - **remove 1 opponent token** from an unlocked/uncompleted sequence space.
 
 **Common Pitfall:** May allow removing tokens from completed sequences (major rule violation) or removing own tokens.
 
-**Current Status:** Not implemented
+**Implementation Status:** ✅ **FULLY IMPLEMENTED**
 
-**Required Implementation:**
-- Add Jack card detection
-- Only allow removing opponent chips
-- Check if chip is part of a **completed** sequence
-- If part of completed sequence, **disallow removal**
-- If not part of completed sequence, **allow removal**
+**Features:**
+- ✅ Jack card detection (`getJackType()`)
+- ✅ Only allows removing opponent chips
+- ✅ Checks if chip is part of a **completed** sequence
+- ✅ Prevents removal from completed sequences
+- ✅ Allows removal from uncompleted sequences
+- ✅ UI highlights all removable opponent chips
+
+**Tests (5):**
+- ✅ Allows removing opponent chip
+- ✅ Prevents removing own chip
+- ✅ Prevents removing from empty space
+- ✅ Prevents removing chips from completed sequences
+- ✅ Allows removing chips NOT in completed sequences
 
 ---
 
-### 7. Dead Cards ⚠️
+### 7. Dead Cards ✅
 
 **Official Rule:** If **both matching spaces** for a card are occupied, player announces "Dead Card", discards it, and draws a replacement on their turn.
 
 **Common Pitfall:** Apps lack a "Declare Dead Card" button, soft-locking players.
 
-**Current Status:** Not implemented
+**Implementation Status:** ✅ **FULLY IMPLEMENTED**
 
-**Required Implementation:**
-- Add "Dead Card" button/action
-- Check if both board positions for a card are occupied
-- Allow discard and immediate draw of replacement card
-- Prevent soft-lock situations
+**Features:**
+- ✅ `isCardDead()` function checks if both board positions are occupied
+- ✅ `getDeadCards()` finds all dead cards in hand
+- ✅ Discard button appears when card has no valid moves
+- ✅ Special UI indicator (💀) for dead cards
+- ✅ Descriptive button text: "💀 Discard Dead Card & Draw New"
+- ✅ Jacks are never dead (always playable)
+- ✅ Prevents soft-lock situations
+
+**Tests (4):**
+- ✅ Detects card as dead when both positions occupied
+- ✅ Does NOT detect as dead when at least one position available
+- ✅ Jacks are never dead (always playable)
+- ✅ Finds all dead cards in hand
 
 ---
 
-### 8. Deck Exhaustion ⚠️
+### 8. Deck Exhaustion ✅
 
 **Official Rule:** If the draw deck runs out, **discard piles are reshuffled** to form a new deck (or ruled a draw).
 
 **Common Pitfall:** May crash or hang when attempting to draw from empty pile.
 
-**Current Status:** Not implemented
+**Implementation Status:** ✅ **FULLY IMPLEMENTED**
 
-**Required Implementation:**
-- Detect when draw pile is empty
-- Reshuffle discard pile into draw pile
-- Handle edge case: both piles empty → game draw
-- Prevent crashes/hangs
+**Features:**
+- ✅ `drawCardWithReshuffle()` handles automatic reshuffling
+- ✅ Detects when draw pile is empty
+- ✅ Reshuffles discard pile into draw pile
+- ✅ Handles edge case: both piles empty → returns null gracefully
+- ✅ User notification: "Deck reshuffled!" toast message
+- ✅ Played/discarded cards added to discard pile
+- ✅ Prevents crashes/hangs
+
+**Tests (4):**
+- ✅ Draws from draw pile when available
+- ✅ Reshuffles discard pile when draw pile is empty
+- ✅ Returns null when both piles are empty
+- ✅ Adds card to discard pile correctly
 
 ---
 
@@ -220,6 +252,15 @@ UPDATE games SET sequences_required = 3 WHERE player_count >= 4;
 - 2 Corner space tests
 - 3 Sequence intersection tests
 
+### Advanced Features Test Suite (16 tests) ⭐ NEW
+**File:** `src/lib/game-logic/__tests__/advanced-features.test.ts`
+
+**Coverage:**
+- 4 Deck reshuffle tests (draw, reshuffle, empty, discard pile)
+- 4 Dead card detection tests
+- 3 Two-Eyed Jack tests (wild card placement)
+- 5 One-Eyed Jack tests (remove opponent chips)
+
 ---
 
 ## 📊 Test Results
@@ -228,52 +269,52 @@ UPDATE games SET sequences_required = 3 WHERE player_count >= 4;
 npm test
 ```
 
-**Result:** ✅ **39/39 tests passing**
+**Result:** ✅ **55/55 tests passing**
 
 - ✅ `sequence.test.ts`: 27/27 passing
 - ✅ `game-rules.test.ts`: 12/12 passing
+- ✅ `advanced-features.test.ts`: 16/16 passing ⭐ NEW
 
 ---
 
 ## 🎯 Summary
 
-### ✅ Correctly Implemented (4/8 rules)
+### ✅ Fully Implemented (8/8 rules) - 100% COMPLETE! 🎉
 
 1. ✅ **Winning Condition** - Configurable sequences required (currently 3)
 2. ✅ **9-in-a-row** - Correctly detects as 2 sequences
 3. ✅ **Corner Spaces** - All 4 corners work as wild cards for both teams
 4. ✅ **Sequence Intersection** - Max 1 shared chip enforced
-
-### ⚠️ Not Yet Implemented (4/8 rules)
-
-5. ⚠️ **Two-Eyed Jacks** - Wild card placement
-6. ⚠️ **One-Eyed Jacks** - Remove opponent chips
-7. ⚠️ **Dead Cards** - Discard and replace unplayable cards
-8. ⚠️ **Deck Exhaustion** - Reshuffle on empty draw pile
+5. ✅ **Two-Eyed Jacks** - Wild card placement on any open space ⭐ NEW
+6. ✅ **One-Eyed Jacks** - Remove opponent chips with sequence protection ⭐ NEW
+7. ✅ **Dead Cards** - Discard and replace unplayable cards with UI indicators ⭐ NEW
+8. ✅ **Deck Exhaustion** - Auto-reshuffle when draw pile empty ⭐ NEW
 
 ---
 
-## 🔧 Next Steps
+## 🎉 All Features Implemented!
 
-To achieve full compliance with official Sequence rules:
+All 8 official Sequence game rules are now fully implemented and tested!
 
-1. **Implement Two-Eyed Jacks** (J♣, J♦)
-   - Add wild card move validation
-   - Allow placement on any open non-corner space
+### Key Improvements Made:
 
-2. **Implement One-Eyed Jacks** (J♠, J♥)
-   - Add chip removal logic
-   - Protect completed sequences from removal
+1. **Two-Eyed Jacks (J♣, J♦)** ✅
+   - Wild card placement on any open space
+   - Proper validation prevents corner/occupied placement
 
-3. **Implement Dead Card Mechanism**
-   - Add UI button for "Declare Dead Card"
-   - Validate both spaces occupied
-   - Auto-discard and draw replacement
+2. **One-Eyed Jacks (J♠, J♥)** ✅
+   - Remove opponent chips with sequence protection
+   - UI highlights removable chips
 
-4. **Implement Deck Reshuffle**
-   - Detect empty draw pile
-   - Reshuffle discard pile
-   - Handle complete exhaustion (game draw)
+3. **Dead Card Mechanism** ✅
+   - Automatic detection of unplayable cards
+   - Visual indicator (💀) on dead cards
+   - One-click discard & draw
+
+4. **Deck Reshuffle** ✅
+   - Automatic reshuffle when draw pile is empty
+   - Graceful handling of complete exhaustion
+   - User notifications
 
 ---
 

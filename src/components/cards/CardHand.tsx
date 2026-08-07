@@ -3,7 +3,7 @@ import { PlayingCard } from './PlayingCard'
 import { findCardPositions } from '@/lib/game-logic/board'
 import { getJackType } from '@/lib/game-logic/cards'
 import { findEmptyPositions, findOpponentChips } from '@/lib/game-logic/board'
-import { isCardPlayable } from '@/lib/game-logic/moves'
+import { isCardPlayable, isCardDead } from '@/lib/game-logic/moves'
 import { Button } from '@/components/ui/Button'
 import { useGame } from '@/hooks/useGame'
 
@@ -61,6 +61,7 @@ export function CardHand() {
   }
 
   const canDiscard = selectedCard && !isCardPlayable(boardState, selectedCard, sequences)
+  const isDead = selectedCard && isCardDead(boardState, selectedCard)
 
   return (
     <div className="fixed bottom-0 left-0 right-0 bg-gradient-to-t from-gray-900 to-transparent p-4">
@@ -72,20 +73,34 @@ export function CardHand() {
               size="sm"
               onClick={() => discardCard(selectedCard)}
             >
-              Discard Card (No valid moves)
+              {isDead ? '💀 Discard Dead Card & Draw New' : 'Discard Card (No valid moves)'}
             </Button>
+            {isDead && (
+              <p className="text-xs text-gray-400 mt-1">
+                Both board positions for this card are occupied
+              </p>
+            )}
           </div>
         )}
         <div className="flex justify-center items-end space-x-2 overflow-x-auto pb-2">
-          {myHand.map((card) => (
-            <PlayingCard
-              key={card.id}
-              card={card}
-              selected={selectedCard?.id === card.id}
-              disabled={!isMyTurn}
-              onClick={() => handleCardClick(card)}
-            />
-          ))}
+          {myHand.map((card) => {
+            const cardIsDead = isCardDead(boardState, card)
+            return (
+              <div key={card.id} className="relative">
+                {cardIsDead && (
+                  <div className="absolute -top-2 -right-2 z-10 bg-red-600 rounded-full w-6 h-6 flex items-center justify-center text-xs">
+                    💀
+                  </div>
+                )}
+                <PlayingCard
+                  card={card}
+                  selected={selectedCard?.id === card.id}
+                  disabled={!isMyTurn}
+                  onClick={() => handleCardClick(card)}
+                />
+              </div>
+            )
+          })}
         </div>
       </div>
     </div>
