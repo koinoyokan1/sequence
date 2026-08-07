@@ -34,26 +34,27 @@ export function useRealtime(gameId: string | null) {
           if (payload.new) {
             const newGameData = payload.new as any
 
-            // Check if this is newer data (higher turn number = more recent)
-            // This prevents race conditions where realtime fires before DB commit
-            if (newGameData.current_turn >= lastSeenTurnRef.current) {
+            // For UPDATE events, check if this is newer or equal data
+            // We use >= to handle both optimistic updates and database updates
+            // Even if turn numbers match, we apply it to sync any other fields
+            if (newGameData.current_turn !== lastSeenTurnRef.current || payload.eventType !== 'UPDATE') {
               console.log('Applying realtime game update:', {
                 turn: newGameData.current_turn,
                 previousTurn: lastSeenTurnRef.current,
+                eventType: payload.eventType,
                 boardState: !!newGameData.board_state,
                 sequences: newGameData.sequences?.length || 0
               })
               lastSeenTurnRef.current = newGameData.current_turn
 
-              // Update all game state
+              // Update all game state - database is source of truth
               setGame(newGameData)
               setBoardState(newGameData.board_state)
               setSequences(newGameData.sequences || [])
             } else {
-              // Stale data - ignore this update
-              console.log('Ignoring stale realtime update', {
-                current: lastSeenTurnRef.current,
-                incoming: newGameData.current_turn
+              // Same turn number on UPDATE - likely our own optimistic update echo
+              console.log('Skipping duplicate realtime update (same turn)', {
+                turn: newGameData.current_turn
               })
             }
           }

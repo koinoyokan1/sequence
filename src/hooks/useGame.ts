@@ -124,7 +124,14 @@ export function useGame() {
       setMyHand(finalHand)
 
       // SINGLE RPC CALL: Update everything in one transaction
-      console.log('Calling play_card_optimized RPC...')
+      console.log('Calling play_card_optimized RPC with:', {
+        gameId,
+        playerId,
+        nextTurn,
+        gameOver,
+        boardSize: newBoard?.length,
+        sequencesCount: newSequences?.length
+      })
       const { data: rpcData, error: rpcError } = await supabase.rpc('play_card_optimized', {
         p_game_id: gameId,
         p_player_id: playerId,
@@ -144,6 +151,19 @@ export function useGame() {
       }
 
       console.log('RPC Success:', rpcData)
+
+      // Verify the update actually happened
+      const { data: verifyGame } = await supabase
+        .from('games')
+        .select('current_turn, board_state')
+        .eq('id', gameId)
+        .single()
+
+      console.log('Verified game state after RPC:', {
+        expectedTurn: nextTurn,
+        actualTurn: verifyGame?.current_turn,
+        match: verifyGame?.current_turn === nextTurn
+      })
 
       // Show success feedback
       if (gameOver) {
