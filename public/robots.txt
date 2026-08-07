@@ -1,0 +1,29 @@
+# robots.txt for Sequence Online Game
+# Allow all bots to crawl public pages
+
+User-agent: *
+Allow: /
+
+# Block dynamic game routes (temporary, user-specific)
+Disallow: /lobby/
+Disallow: /game/
+
+# Block admin or API routes if they exist
+Disallow: /admin/
+Disallow: /api/
+
+# Allow social media bots specifically
+User-agent: Twitterbot
+Allow: /
+
+User-agent: facebookexternalhit
+Allow: /
+
+User-agent: LinkedInBot
+Allow: /
+
+User-agent: WhatsApp
+Allow: /
+
+# Sitemap location
+Sitemap: https://koinoyokan1.github.io/sequence/sitemap.xml

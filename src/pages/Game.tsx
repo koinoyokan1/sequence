@@ -8,6 +8,7 @@ import { CardHand } from '@/components/cards/CardHand'
 import { GameHeader } from '@/components/game/GameHeader'
 import { TurnIndicator } from '@/components/game/TurnIndicator'
 import { GameChat } from '@/components/game/GameChat'
+import { SEO } from '@/components/SEO'
 import { HAND_SIZES } from '@/lib/constants'
 import { dealCards } from '@/lib/game-logic/cards'
 
@@ -165,7 +166,16 @@ export function Game() {
   const winnerTeam = game.winner_team
   
   return (
-    <div className="min-h-screen bg-gray-900 p-4 pb-32">
+    <>
+      <SEO
+        title="Playing Sequence - Game in Progress"
+        description="Strategic multiplayer Sequence game in progress. Compete with friends in real-time!"
+        image="/og-images/game.png"
+        url="/sequence/game"
+        type="game"
+        noIndex={true}
+      />
+      <div className="min-h-screen bg-gray-900 p-4 pb-32">
       <div className="max-w-screen-xl mx-auto">
         {/* Game Over Banner */}
         {isGameOver && (
@@ -186,5 +196,6 @@ export function Game() {
       {!isGameOver && <CardHand />}
       {game.status === 'playing' && <GameChat />}
     </div>
+    </>
   )
 }

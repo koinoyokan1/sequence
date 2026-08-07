@@ -1,10 +1,19 @@
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import { Button } from '@/components/ui/Button'
+import { SEO } from '@/components/SEO'
 
 export function Credits() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 flex items-center justify-center p-4">
+    <>
+      <SEO
+        title="Credits - Sequence Online"
+        description="Learn about the creation of Sequence Online. Built with love, frustration, and a passion for gaming by Ajay Nair."
+        image="/og-images/credits.png"
+        url="/sequence/credits"
+        type="website"
+      />
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 flex items-center justify-center p-4">
       <div className="max-w-4xl w-full">
         <motion.div
           initial={{ opacity: 0, y: -50 }}
@@ -128,5 +137,6 @@ export function Credits() {
         </motion.div>
       </div>
     </div>
+    </>
   )
 }

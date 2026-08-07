@@ -4,6 +4,7 @@ import { supabase, signInAnonymously } from '@/lib/supabase'
 import { useGameStore } from '@/stores/gameStore'
 import { useUIStore } from '@/stores/uiStore'
 import { Button } from '@/components/ui/Button'
+import { SEO } from '@/components/SEO'
 import { validatePlayerName } from '@/utils/validators'
 import { formatInviteCode, isValidInviteCode } from '@/utils/invite-code'
 
@@ -82,7 +83,15 @@ export function JoinGame() {
   }
   
   return (
-    <div className="min-h-screen bg-gray-900 flex items-center justify-center p-4">
+    <>
+      <SEO
+        title="Join Game - Sequence Online"
+        description="Join a Sequence game with your friends. Enter your game code and start playing this strategic multiplayer board game."
+        image="/og-images/join.png"
+        url="/sequence/join"
+        type="website"
+      />
+      <div className="min-h-screen bg-gray-900 flex items-center justify-center p-4">
       <div className="max-w-md w-full bg-gray-800 rounded-xl shadow-2xl p-8">
         <h1 className="text-3xl font-bold text-white mb-6 text-center">Join Game</h1>
         
@@ -155,5 +164,6 @@ export function JoinGame() {
         </form>
       </div>
     </div>
+    </>
   )
 }

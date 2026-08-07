@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/Button'
+import { SEO } from '@/components/SEO'
 import { motion } from 'framer-motion'
 import { supabase } from '@/lib/supabase'
 import { useGameStore } from '@/stores/gameStore'
@@ -66,7 +67,15 @@ export function Landing() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 flex items-center justify-center p-4">
+    <>
+      <SEO
+        title="Sequence - Free Online Multiplayer Board Game"
+        description="Play Sequence online for free! Strategic multiplayer board game with real-time gameplay. Create games, invite friends, and compete in this classic card-based strategy game. No download required."
+        image="/og-images/landing.png"
+        url="/sequence/"
+        type="game"
+      />
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 flex items-center justify-center p-4">
       <div className="max-w-4xl w-full text-center">
         <motion.div
           initial={{ opacity: 0, y: -50 }}
@@ -130,5 +139,6 @@ export function Landing() {
         </motion.div>
       </div>
     </div>
+    </>
   )
 }

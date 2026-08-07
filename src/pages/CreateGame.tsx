@@ -4,6 +4,7 @@ import { supabase, signInAnonymously } from '@/lib/supabase'
 import { useGameStore } from '@/stores/gameStore'
 import { useUIStore } from '@/stores/uiStore'
 import { Button } from '@/components/ui/Button'
+import { SEO } from '@/components/SEO'
 import { validatePlayerName } from '@/utils/validators'
 import { createInitialBoard } from '@/lib/game-logic/board'
 import { createTwoDecks, shuffleDeck } from '@/lib/game-logic/cards'
@@ -96,7 +97,15 @@ export function CreateGame() {
   }
   
   return (
-    <div className="min-h-screen bg-gray-900 flex items-center justify-center p-4">
+    <>
+      <SEO
+        title="Create Game - Sequence Online"
+        description="Create a new Sequence game and invite your friends. Choose your team and start playing this strategic multiplayer board game instantly."
+        image="/og-images/create.png"
+        url="/sequence/create"
+        type="website"
+      />
+      <div className="min-h-screen bg-gray-900 flex items-center justify-center p-4">
       <div className="max-w-md w-full bg-gray-800 rounded-xl shadow-2xl p-8">
         <h1 className="text-3xl font-bold text-white mb-6 text-center">Create Game</h1>
         
@@ -154,5 +163,6 @@ export function CreateGame() {
         </form>
       </div>
     </div>
+    </>
   )
 }
