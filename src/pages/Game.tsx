@@ -182,7 +182,7 @@ export function Game() {
           <div className="mb-4 bg-gradient-to-r from-yellow-600 to-yellow-500 rounded-xl p-6 text-center shadow-2xl">
             <h1 className="text-4xl font-bold text-white mb-2">🎉 Game Over! 🎉</h1>
             <p className="text-2xl text-white">
-              Team {winnerTeam === 1 ? 'Red' : 'Blue'} Wins!
+              Team {winnerTeam === 1 ? 'Red' : 'Green'} Wins!
             </p>
           </div>
         )}

@@ -22,7 +22,7 @@ export default {
         },
         team: {
           1: '#ef4444', // Red
-          2: '#3b82f6', // Blue
+          2: '#22c55e', // Green
         },
       },
       animation: {

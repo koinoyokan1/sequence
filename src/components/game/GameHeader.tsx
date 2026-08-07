@@ -37,7 +37,7 @@ export function GameHeader() {
         
         {/* Team 2 */}
         <div className="text-center">
-          <h3 className="text-lg font-bold text-team-2 mb-2">Team Blue</h3>
+          <h3 className="text-lg font-bold text-team-2 mb-2">Team Green</h3>
           <div className="text-sm text-gray-400 mb-2">
             {team2Players.map(p => p.name).join(', ')}
           </div>

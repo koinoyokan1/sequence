@@ -45,7 +45,7 @@ export function BoardCell({ cell, highlighted, onClick }: BoardCellProps) {
           'absolute inset-0 flex flex-col items-center justify-center p-0.5 sm:p-1 rounded overflow-hidden',
           !cell.chip && 'bg-white',
           cell.chip === 1 && 'bg-team-1 border-2 sm:border-4 border-red-800',
-          cell.chip === 2 && 'bg-team-2 border-2 sm:border-4 border-blue-800',
+          cell.chip === 2 && 'bg-team-2 border-2 sm:border-4 border-green-800',
           inSequence && 'ring-2 sm:ring-4 ring-yellow-400'
         )}>
           <div className={clsx(

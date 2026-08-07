@@ -151,8 +151,8 @@ export function CreateGame() {
                     : 'border-gray-600 hover:border-team-2'
                 }`}
               >
-                <div className="text-2xl mb-2">🔵</div>
-                <div className="text-white font-semibold">Team Blue</div>
+                <div className="text-2xl mb-2">🟢</div>
+                <div className="text-white font-semibold">Team Green</div>
               </button>
             </div>
           </div>

@@ -15,7 +15,7 @@ export function ChipPiece({ team, inSequence }: ChipPieceProps) {
       className={clsx(
         'w-10 h-10 rounded-full shadow-lg flex items-center justify-center',
         'border-4',
-        team === 1 ? 'bg-team-1 border-red-700' : 'bg-team-2 border-blue-700',
+        team === 1 ? 'bg-team-1 border-red-700' : 'bg-team-2 border-green-700',
         inSequence && 'animate-sequence-glow'
       )}
     >
