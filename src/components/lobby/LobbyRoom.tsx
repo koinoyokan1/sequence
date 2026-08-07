@@ -45,9 +45,10 @@ export function LobbyRoom() {
   // Redirect to game when it starts
   useEffect(() => {
     if (game?.status === 'playing') {
+      setLoading(false) // Clear loading state before redirect
       navigate(`/game/${gameId}`)
     }
-  }, [game?.status, gameId, navigate])
+  }, [game?.status, gameId, navigate, setLoading])
   
   const currentPlayer = players.find(p => p.id === playerId)
   const isHost = currentPlayer?.is_host || false
