@@ -7,6 +7,7 @@ import { BoardGrid } from '@/components/board/BoardGrid'
 import { CardHand } from '@/components/cards/CardHand'
 import { GameHeader } from '@/components/game/GameHeader'
 import { TurnIndicator } from '@/components/game/TurnIndicator'
+import { GameChat } from '@/components/game/GameChat'
 import { HAND_SIZES } from '@/lib/constants'
 import { dealCards } from '@/lib/game-logic/cards'
 
@@ -183,6 +184,7 @@ export function Game() {
         </div>
       </div>
       {!isGameOver && <CardHand />}
+      {game.status === 'playing' && <GameChat />}
     </div>
   )
 }

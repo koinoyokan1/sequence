@@ -8,6 +8,7 @@ export function useRealtime(gameId: string | null) {
   const setPlayers = useGameStore(state => state.setPlayers)
   const setBoardState = useGameStore(state => state.setBoardState)
   const setSequences = useGameStore(state => state.setSequences)
+  const addChatMessage = useGameStore(state => state.addChatMessage)
 
   // Track the current turn to detect if we're getting stale data
   const lastSeenTurnRef = useRef<number>(-1)
@@ -82,12 +83,33 @@ export function useRealtime(gameId: string | null) {
       .subscribe()
     
     channels.push(playersChannel)
-    
+
+    // Subscribe to chat messages
+    const chatChannel = supabase
+      .channel(`chat:${gameId}`)
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'chat_messages',
+          filter: `game_id=eq.${gameId}`,
+        },
+        (payload) => {
+          if (payload.new) {
+            addChatMessage(payload.new as any)
+          }
+        }
+      )
+      .subscribe()
+
+    channels.push(chatChannel)
+
     // Cleanup
     return () => {
       channels.forEach(channel => {
         supabase.removeChannel(channel)
       })
     }
-  }, [gameId, setGame, setPlayers, setBoardState, setSequences])
+  }, [gameId, setGame, setPlayers, setBoardState, setSequences, addChatMessage])
 }

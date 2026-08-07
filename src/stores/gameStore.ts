@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import type { Game, Player, Card, BoardCell, Sequence, Position } from '@/types/game'
+import type { ChatMessage } from '@/types/chat'
 
 interface SequenceChoice {
   direction: string
@@ -17,6 +18,7 @@ interface GameState {
   myHand: Card[]
   boardState: BoardCell[][]
   sequences: Sequence[]
+  chatMessages: ChatMessage[]
 
   // UI state
   selectedCard: Card | null
@@ -32,6 +34,8 @@ interface GameState {
   setMyHand: (cards: Card[]) => void
   setBoardState: (board: BoardCell[][]) => void
   setSequences: (sequences: Sequence[]) => void
+  setChatMessages: (messages: ChatMessage[]) => void
+  addChatMessage: (message: ChatMessage) => void
   setSelectedCard: (card: Card | null) => void
   setHighlightedPositions: (positions: Position[]) => void
   setSequenceChoice: (choice: SequenceChoice | null) => void
@@ -48,6 +52,7 @@ export const useGameStore = create<GameState>((set, get) => ({
   myHand: [],
   boardState: [],
   sequences: [],
+  chatMessages: [],
   selectedCard: null,
   highlightedPositions: [],
   isMyTurn: false,
@@ -81,6 +86,10 @@ export const useGameStore = create<GameState>((set, get) => ({
   setMyHand: (cards) => set({ myHand: cards }),
   setBoardState: (board) => set({ boardState: board }),
   setSequences: (sequences) => set({ sequences }),
+  setChatMessages: (messages) => set({ chatMessages: messages }),
+  addChatMessage: (message) => set((state) => ({
+    chatMessages: [...state.chatMessages, message]
+  })),
   setSelectedCard: (card) => set({ selectedCard: card }),
   setHighlightedPositions: (positions) => set({ highlightedPositions: positions }),
   setSequenceChoice: (choice) => set({ sequenceChoice: choice }),
@@ -109,6 +118,7 @@ export const useGameStore = create<GameState>((set, get) => ({
     myHand: [],
     boardState: [],
     sequences: [],
+    chatMessages: [],
     selectedCard: null,
     highlightedPositions: [],
     isMyTurn: false,
