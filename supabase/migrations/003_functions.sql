@@ -76,8 +76,8 @@ BEGIN
     RAISE EXCEPTION 'Game not found or already started';
   END IF;
   
-  -- Check if game is full (max 4 players)
-  IF v_player_count >= 4 THEN
+  -- Check if game is full (max 2 players)
+  IF v_player_count >= 2 THEN
     RAISE EXCEPTION 'Game is full';
   END IF;
   

@@ -8,6 +8,9 @@ export const BOARD_SIZE = boardLayoutData.size
 
 export const CORNER_POSITIONS = boardLayoutData.freeSpaces
 
+// Maximum number of players (currently only 2-player mode supported)
+export const MAX_PLAYERS = 2
+
 // Initial hand sizes based on player count
 export const HAND_SIZES: Record<number, number> = {
   2: 7,

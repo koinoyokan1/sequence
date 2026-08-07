@@ -6,6 +6,7 @@ import { useUIStore } from '@/stores/uiStore'
 import { PlayerList } from './PlayerList'
 import { Button } from '@/components/ui/Button'
 import { useRealtime } from '@/hooks/useRealtime'
+import { MAX_PLAYERS } from '@/lib/constants'
 
 export function LobbyRoom() {
   const navigate = useNavigate()
@@ -106,7 +107,7 @@ export function LobbyRoom() {
         
         <div className="mb-8">
           <h2 className="text-xl font-semibold text-white mb-4">
-            Players ({players.length}/4)
+            Players ({players.length}/{MAX_PLAYERS})
           </h2>
           <PlayerList players={players} />
         </div>
