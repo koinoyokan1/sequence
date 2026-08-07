@@ -18,10 +18,33 @@ describe('useGame - Edge Cases and Corner Cases', () => {
   const mockGameId = 'test-game-123'
   const mockPlayerId = 'player-1'
   
+  // Create a board with Ace of Hearts at position (5, 1) matching the real board layout
+  const createTestBoard = () => {
+    const board = []
+    for (let y = 0; y < 10; y++) {
+      const row = []
+      for (let x = 0; x < 10; x++) {
+        const isCorner = (x === 0 && y === 0) || (x === 9 && y === 0) ||
+                        (x === 0 && y === 9) || (x === 9 && y === 9)
+        // Place Ace of Hearts at (5,1) to match real board
+        const card = (x === 5 && y === 1) ? { id: 'board-A♥', rank: 'A', suit: 'hearts' } : null
+        row.push({
+          x,
+          y,
+          card,
+          chip: null,
+          isFreeSpace: isCorner,
+        })
+      }
+      board.push(row)
+    }
+    return board
+  }
+
   const mockGame = {
     id: mockGameId,
     current_turn: 0,
-    board_state: Array(10).fill(null).map(() => Array(10).fill({ chip: null, isFreeSpace: false })),
+    board_state: createTestBoard(),
     sequences: [],
     status: 'playing',
     sequences_required: 2,
@@ -89,7 +112,7 @@ describe('useGame - Edge Cases and Corner Cases', () => {
       const { result } = renderHook(() => useGame())
 
       await act(async () => {
-        await result.current.playCard({ x: 0, y: 0 })
+        await result.current.playCard({ x: 5, y: 1 })
       })
 
       expect(mockAddToast).toHaveBeenCalledWith('Failed to play card', 'error')
@@ -117,7 +140,7 @@ describe('useGame - Edge Cases and Corner Cases', () => {
       const { result } = renderHook(() => useGame())
 
       await act(async () => {
-        await result.current.playCard({ x: 0, y: 0 })
+        await result.current.playCard({ x: 5, y: 1 })
       })
 
       expect(mockAddToast).toHaveBeenCalledWith('Failed to play card', 'error')
@@ -143,7 +166,7 @@ describe('useGame - Edge Cases and Corner Cases', () => {
       const { result } = renderHook(() => useGame())
 
       await act(async () => {
-        await result.current.playCard({ x: 0, y: 0 })
+        await result.current.playCard({ x: 5, y: 1 })
       })
 
       expect(mockAddToast).toHaveBeenCalledWith('Failed to play card', 'error')
@@ -270,8 +293,8 @@ describe('useGame - Edge Cases and Corner Cases', () => {
       // Fire two moves simultaneously
       await act(async () => {
         await Promise.all([
-          result.current.playCard({ x: 0, y: 0 }),
-          result.current.playCard({ x: 0, y: 0 }),
+          result.current.playCard({ x: 5, y: 1 }),
+          result.current.playCard({ x: 5, y: 1 }),
         ])
       })
 
@@ -301,7 +324,7 @@ describe('useGame - Edge Cases and Corner Cases', () => {
       const { result } = renderHook(() => useGame())
 
       await act(async () => {
-        await result.current.playCard({ x: 0, y: 0 })
+        await result.current.playCard({ x: 5, y: 1 })
       })
 
       // Should complete without error even with no cards

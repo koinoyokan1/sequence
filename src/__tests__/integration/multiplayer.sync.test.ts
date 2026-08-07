@@ -28,13 +28,33 @@ describe('Multiplayer Synchronization - Integration Tests', () => {
     vi.clearAllMocks()
     realtimeCallbacks = {}
     
-    // Shared game state
+    // Shared game state with Ace of Hearts at position (5, 1)
+    const createTestBoard = () => {
+      const board = []
+      for (let y = 0; y < 10; y++) {
+        const row = []
+        for (let x = 0; x < 10; x++) {
+          const isCorner = (x === 0 && y === 0) || (x === 9 && y === 0) ||
+                          (x === 0 && y === 9) || (x === 9 && y === 9)
+          // Place Ace of Hearts at (5,1) to match real board
+          const card = (x === 5 && y === 1) ? { id: 'board-A♥', rank: 'A', suit: 'hearts' } : null
+          row.push({
+            x,
+            y,
+            card,
+            chip: null,
+            isFreeSpace: isCorner,
+          })
+        }
+        board.push(row)
+      }
+      return board
+    }
+
     const sharedGame = {
       id: 'game-123',
       current_turn: 0,
-      board_state: Array(10).fill(null).map(() => 
-        Array(10).fill(null).map(() => ({ chip: null, isFreeSpace: false }))
-      ),
+      board_state: createTestBoard(),
       sequences: [],
       status: 'playing',
       sequences_required: 2,
@@ -164,7 +184,7 @@ describe('Multiplayer Synchronization - Integration Tests', () => {
 
     // Player 1 makes a move
     await act(async () => {
-      await player1.current.playCard({ x: 0, y: 0 })
+      await player1.current.playCard({ x: 5, y: 1 })
     })
 
     // Wait for realtime to propagate
