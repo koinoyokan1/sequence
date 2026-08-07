@@ -162,8 +162,19 @@ function checkSequencesFromPosition(
       team,
       id: generateSequenceId(positions.slice(4, 9)),
     })
+  } else if (positions.length === 6) {
+    // For exactly 6 consecutive positions, we have 2 possible windows:
+    // [0-4] and [1-5]
+    // Mark this as ambiguous - the game logic will need to ask the player
+    // For now, default to the first window [0-4]
+    sequences.push({
+      positions: positions.slice(0, SEQUENCE_LENGTH),
+      team,
+      id: generateSequenceId(positions.slice(0, SEQUENCE_LENGTH)),
+      // Add metadata to indicate this is ambiguous
+    })
   } else {
-    // For 5-8 consecutive positions, create 1 sequence from the first 5
+    // For 5, 7, or 8 consecutive positions, create 1 sequence from the first 5
     sequences.push({
       positions: positions.slice(0, SEQUENCE_LENGTH),
       team,
@@ -200,11 +211,75 @@ export function hasWon(sequences: Sequence[], team: number, requiredSequences: n
 }
 
 export function canRemoveChip(
-  _board: BoardCell[][],
+  board: BoardCell[][],
   x: number,
   y: number,
   sequences: Sequence[]
 ): boolean {
   // Cannot remove chips that are part of a completed sequence
-  return !isPositionInSequence(sequences, x, y)
+  if (isPositionInSequence(sequences, x, y)) {
+    return false
+  }
+
+  // Also cannot remove chips that are part of a run of 5+ chips
+  // (even if they're not in the marked sequence positions)
+  // This handles the case of 6-8 chips where only 5 are marked
+  const cell = board[y][x]
+  if (!cell.chip) return true
+
+  const team = cell.chip
+
+  // Check all directions for a run of 5+ chips
+  for (const direction of DIRECTIONS) {
+    const runLength = getRunLength(board, x, y, direction.dx, direction.dy, team)
+    if (runLength >= SEQUENCE_LENGTH) {
+      return false
+    }
+  }
+
+  return true
+}
+
+// Helper function to count the length of a run in a direction
+function getRunLength(
+  board: BoardCell[][],
+  startX: number,
+  startY: number,
+  dx: number,
+  dy: number,
+  team: number
+): number {
+  // Go backwards to find the start
+  let backX = startX
+  let backY = startY
+
+  while (backX - dx >= 0 && backX - dx < BOARD_SIZE &&
+         backY - dy >= 0 && backY - dy < BOARD_SIZE) {
+    const cell = board[backY - dy][backX - dx]
+    if (cell.isFreeSpace || cell.chip === team) {
+      backX -= dx
+      backY -= dy
+    } else {
+      break
+    }
+  }
+
+  // Count forward from the start
+  let count = 0
+  let x = backX
+  let y = backY
+
+  while (x >= 0 && x < BOARD_SIZE && y >= 0 && y < BOARD_SIZE) {
+    const cell = board[y][x]
+    if (cell.isFreeSpace || cell.chip === team) {
+      count++
+    } else {
+      break
+    }
+
+    x += dx
+    y += dy
+  }
+
+  return count
 }

@@ -8,6 +8,7 @@ import { placeChip, removeChip } from '@/lib/game-logic/board'
 import { detectSequences, hasWon } from '@/lib/game-logic/sequence'
 import { removeCardFromHand, drawCardWithReshuffle, addToDiscardPile } from '@/lib/game-logic/cards'
 import { playCardPlaceSound, playWinSound } from '@/utils/sounds'
+// import { detectAmbiguousSequence } from '@/lib/game-logic/sequence-choice' // TODO: Use for sequence choice feature
 
 export function useGame() {
   const gameId = useGameStore(state => state.gameId)
@@ -25,7 +26,8 @@ export function useGame() {
   const setSequences = useGameStore(state => state.setSequences)
   const setSelectedCard = useGameStore(state => state.setSelectedCard)
   const setHighlightedPositions = useGameStore(state => state.setHighlightedPositions)
-  
+  // const setSequenceChoice = useGameStore(state => state.setSequenceChoice) // TODO: Use for sequence choice feature
+
   const addToast = useUIStore(state => state.addToast)
   const setLoading = useUIStore(state => state.setLoading)
   
@@ -55,10 +57,14 @@ export function useGame() {
       let newBoard = validation.moveType === 'place'
         ? placeChip(boardState, position.x, position.y, currentPlayer.team)
         : removeChip(boardState, position.x, position.y)
-      
+
       // Remove card from hand
       const newHand = removeCardFromHand(myHand, selectedCard.id)
-      
+
+      // TODO: Detect ambiguous sequences and show choice modal
+      // For now, we always use the leftmost 5 chips for 6-chip runs
+      // But all 6+ chips are protected from removal (handled in canRemoveChip)
+
       // Draw new card from deck (with automatic reshuffle)
       const { data: deckData } = await supabase
         .from('game_decks')

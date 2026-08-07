@@ -1,6 +1,13 @@
 import { create } from 'zustand'
 import type { Game, Player, Card, BoardCell, Sequence, Position } from '@/types/game'
 
+interface SequenceChoice {
+  direction: string
+  option1: Position[]
+  option2: Position[]
+  onSelect: (choice: 1 | 2) => void
+}
+
 interface GameState {
   // Game data
   gameId: string | null
@@ -10,12 +17,13 @@ interface GameState {
   myHand: Card[]
   boardState: BoardCell[][]
   sequences: Sequence[]
-  
+
   // UI state
   selectedCard: Card | null
   highlightedPositions: Position[]
   isMyTurn: boolean
-  
+  sequenceChoice: SequenceChoice | null
+
   // Actions
   setGameId: (id: string | null) => void
   setPlayerId: (id: string | null) => void
@@ -26,6 +34,7 @@ interface GameState {
   setSequences: (sequences: Sequence[]) => void
   setSelectedCard: (card: Card | null) => void
   setHighlightedPositions: (positions: Position[]) => void
+  setSequenceChoice: (choice: SequenceChoice | null) => void
   updateIsMyTurn: () => void
   reset: () => void
 }
@@ -42,6 +51,7 @@ export const useGameStore = create<GameState>((set, get) => ({
   selectedCard: null,
   highlightedPositions: [],
   isMyTurn: false,
+  sequenceChoice: null,
   
   // Actions
   setGameId: (id) => {
@@ -73,6 +83,7 @@ export const useGameStore = create<GameState>((set, get) => ({
   setSequences: (sequences) => set({ sequences }),
   setSelectedCard: (card) => set({ selectedCard: card }),
   setHighlightedPositions: (positions) => set({ highlightedPositions: positions }),
+  setSequenceChoice: (choice) => set({ sequenceChoice: choice }),
   
   updateIsMyTurn: () => {
     const { game, playerId, players } = get()
@@ -101,5 +112,6 @@ export const useGameStore = create<GameState>((set, get) => ({
     selectedCard: null,
     highlightedPositions: [],
     isMyTurn: false,
+    sequenceChoice: null,
   }),
 }))
