@@ -119,7 +119,35 @@ This function updates all three tables in a single transaction, ensuring atomici
 3. **WebSocket Updates**: Consider using Supabase Realtime for instant opponent move updates
 4. **Prefetching**: Prefetch next card while opponent is thinking
 
+## Realtime Synchronization Fix
+
+After implementing optimistic updates, we discovered that opponent players weren't seeing moves in realtime. The issue was:
+
+**Problem:** We were only updating `boardState` and `sequences` optimistically, but not the `game` object itself. This caused the turn number to be out of sync.
+
+**Solution:** Now we also update the entire game object optimistically:
+```typescript
+const updatedGame = {
+  ...game,
+  board_state: newBoard,
+  sequences: newSequences,
+  current_turn: nextTurn,
+  status: gameOver ? 'finished' : game.status,
+  winner_team: gameOver ? currentPlayer.team : game.winner_team,
+}
+setGame(updatedGame)
+```
+
+This ensures:
+- Current player sees instant updates (optimistic)
+- Opponent receives updates via realtime WebSocket
+- Turn indicator updates correctly for both players
+- No stale data issues with the realtime subscription
+
+Added debug logging to track realtime update flow in the browser console.
+
 ## Files Changed
 
 - `supabase/migrations/006_play_card_optimized.sql` - New combined RPC function
-- `src/hooks/useGame.ts` - Refactored `playCard()` with optimistic updates
+- `src/hooks/useGame.ts` - Refactored `playCard()` with optimistic updates and game object sync
+- `src/hooks/useRealtime.ts` - Added debug logging for realtime subscriptions
