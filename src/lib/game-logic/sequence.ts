@@ -19,25 +19,28 @@ export function detectSequences(board: BoardCell[][]): Sequence[] {
     for (let x = 0; x < BOARD_SIZE; x++) {
       const cell = board[y][x]
 
-      // Only check from positions with chips
+      // Only check from positions with chips or free spaces
       if (cell.chip === null && !cell.isFreeSpace) continue
 
-      const team = cell.chip || 0 // Free spaces can be used by either team
+      // If it's a free space, check sequences for both teams
+      const teamsToCheck = cell.isFreeSpace ? [1, 2] : [cell.chip!]
 
-      // Check all directions
-      for (const direction of DIRECTIONS) {
-        const sequence = checkSequenceFromPosition(board, x, y, direction.dx, direction.dy, team)
+      for (const team of teamsToCheck) {
+        // Check all directions
+        for (const direction of DIRECTIONS) {
+          const sequence = checkSequenceFromPosition(board, x, y, direction.dx, direction.dy, team)
 
-        if (sequence && sequence.positions.length >= SEQUENCE_LENGTH) {
-          const sequenceId = generateSequenceId(sequence.positions)
+          if (sequence && sequence.positions.length >= SEQUENCE_LENGTH) {
+            const sequenceId = generateSequenceId(sequence.positions)
 
-          // Avoid duplicate sequences
-          if (!checkedPositions.has(sequenceId)) {
-            allSequences.push({
-              ...sequence,
-              id: sequenceId,
-            })
-            checkedPositions.add(sequenceId)
+            // Avoid duplicate sequences
+            if (!checkedPositions.has(sequenceId)) {
+              allSequences.push({
+                ...sequence,
+                id: sequenceId,
+              })
+              checkedPositions.add(sequenceId)
+            }
           }
         }
       }

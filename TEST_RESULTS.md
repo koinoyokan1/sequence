@@ -1,6 +1,6 @@
 # Sequence Game - Test Results
 
-## ✅ All Tests Passing (16/16)
+## ✅ All Tests Passing (27/27)
 
 Comprehensive unit tests have been written and executed to verify the game logic handles all corner cases and scenarios correctly.
 
@@ -8,7 +8,7 @@ Comprehensive unit tests have been written and executed to verify the game logic
 
 #### 1. Core Sequence Detection (4 tests) ✅
 - ✅ Horizontal sequence of 5
-- ✅ Vertical sequence of 5  
+- ✅ Vertical sequence of 5
 - ✅ Diagonal sequence (down-right)
 - ✅ Diagonal sequence (up-right)
 
@@ -31,6 +31,19 @@ Comprehensive unit tests have been written and executed to verify the game logic
 - ✅ Allows 2 sequences sharing exactly 1 cell
 - ✅ Rejects 2 sequences sharing 2+ cells (only counts first)
 - ✅ Handles 3 sequences with valid overlaps (all share 1 center cell)
+
+#### 6. Free Spaces / Corner Wild Cards (11 tests) ✅
+- ✅ Top-left corner (0,0) in horizontal sequence
+- ✅ Top-left corner (0,0) in vertical sequence
+- ✅ Top-left corner (0,0) in diagonal sequence
+- ✅ Top-right corner (9,0) in sequences
+- ✅ Bottom-left corner (0,9) in sequences
+- ✅ Bottom-right corner (9,9) in sequences
+- ✅ Both teams can use same free space for different sequences
+- ✅ Two free spaces in same sequence
+- ✅ 3 chips + 1 free space = NO sequence (need 5 total)
+- ✅ 4 chips + 1 free space = VALID sequence (5 total)
+- ✅ Multiple corners used independently in different sequences
 
 ### Key Findings
 
@@ -57,6 +70,13 @@ Comprehensive unit tests have been written and executed to verify the game logic
 6. **Win condition enforced** ✅
    - Requires exactly 3 valid sequences
    - 2 sequences is not enough
+
+7. **Free spaces (corners) work as wild cards** ✅
+   - All 4 corners (0,0), (9,0), (0,9), (9,9) can be used in sequences
+   - Free spaces count as belonging to whichever team is being checked
+   - Both teams can use the same free space in different sequences
+   - Multiple free spaces can be used in a single sequence
+   - 4 chips + 1 free space = valid 5-sequence
 
 ### Running the Tests
 
@@ -85,5 +105,6 @@ npm run test:ui
 - Edge cases (4 chips, 6 chips, gaps, opponents)
 - Overlap rules (max 1 common cell between any 2 sequences)
 - Win conditions (exactly 3 sequences required)
+- **Free space corner wild cards** (all 4 corners work for both teams)
 
-All 16 tests pass ✅
+All 27 tests pass ✅

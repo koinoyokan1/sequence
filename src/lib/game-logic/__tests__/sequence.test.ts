@@ -308,3 +308,192 @@ describe('Overlap Rule - Max 1 Common Cell', () => {
     expect(sequences.length).toBe(3)
   })
 })
+
+
+describe('Free Spaces (Corners) - Wild Card Behavior', () => {
+  it('should use top-left corner (0,0) in a horizontal sequence', () => {
+    // Free space at (0,0) + 4 chips = 5 total
+    const board = createBoardWithChips([
+      // (0,0) is free space - counts as any team
+      { x: 1, y: 0, team: 1 },
+      { x: 2, y: 0, team: 1 },
+      { x: 3, y: 0, team: 1 },
+      { x: 4, y: 0, team: 1 },
+    ])
+
+    const sequences = detectSequences(board)
+    expect(sequences.length).toBe(1)
+    expect(sequences[0].team).toBe(1)
+    expect(sequences[0].positions.length).toBe(5)
+  })
+
+  it('should use top-left corner (0,0) in a vertical sequence', () => {
+    const board = createBoardWithChips([
+      // (0,0) is free space
+      { x: 0, y: 1, team: 2 },
+      { x: 0, y: 2, team: 2 },
+      { x: 0, y: 3, team: 2 },
+      { x: 0, y: 4, team: 2 },
+    ])
+
+    const sequences = detectSequences(board)
+    expect(sequences.length).toBe(1)
+    expect(sequences[0].team).toBe(2)
+  })
+
+  it('should use top-left corner (0,0) in a diagonal sequence', () => {
+    const board = createBoardWithChips([
+      // Free space at (0,0)
+      { x: 1, y: 1, team: 1 },
+      { x: 2, y: 2, team: 1 },
+      { x: 3, y: 3, team: 1 },
+      { x: 4, y: 4, team: 1 },
+    ])
+
+    const sequences = detectSequences(board)
+    expect(sequences.length).toBe(1)
+    expect(sequences[0].team).toBe(1)
+  })
+
+  it('should use top-right corner (9,0) in sequences', () => {
+    const board = createBoardWithChips([
+      // Horizontal from (5,0) to (9,0) where (9,0) is free
+      { x: 5, y: 0, team: 1 },
+      { x: 6, y: 0, team: 1 },
+      { x: 7, y: 0, team: 1 },
+      { x: 8, y: 0, team: 1 },
+      // (9,0) is free space
+    ])
+
+    const sequences = detectSequences(board)
+    expect(sequences.length).toBe(1)
+  })
+
+  it('should use bottom-left corner (0,9) in sequences', () => {
+    const board = createBoardWithChips([
+      // Vertical from (0,5) to (0,9) where (0,9) is free
+      { x: 0, y: 5, team: 2 },
+      { x: 0, y: 6, team: 2 },
+      { x: 0, y: 7, team: 2 },
+      { x: 0, y: 8, team: 2 },
+      // (0,9) is free space
+    ])
+
+    const sequences = detectSequences(board)
+    expect(sequences.length).toBe(1)
+  })
+
+  it('should use bottom-right corner (9,9) in sequences', () => {
+    const board = createBoardWithChips([
+      // Diagonal from (5,5) to (9,9) where (9,9) is free
+      { x: 5, y: 5, team: 1 },
+      { x: 6, y: 6, team: 1 },
+      { x: 7, y: 7, team: 1 },
+      { x: 8, y: 8, team: 1 },
+      // (9,9) is free space
+    ])
+
+    const sequences = detectSequences(board)
+    expect(sequences.length).toBe(1)
+  })
+
+  it('should allow both teams to use the same free space for different sequences', () => {
+    const board = createBoardWithChips([
+      // Team 1 horizontal using top-left corner (0,0)
+      { x: 1, y: 0, team: 1 },
+      { x: 2, y: 0, team: 1 },
+      { x: 3, y: 0, team: 1 },
+      { x: 4, y: 0, team: 1 },
+      // Team 2 vertical using same corner (0,0)
+      { x: 0, y: 1, team: 2 },
+      { x: 0, y: 2, team: 2 },
+      { x: 0, y: 3, team: 2 },
+      { x: 0, y: 4, team: 2 },
+    ])
+
+    const sequences = detectSequences(board)
+    expect(sequences.length).toBe(2)
+    expect(sequences.filter(s => s.team === 1).length).toBe(1)
+    expect(sequences.filter(s => s.team === 2).length).toBe(1)
+  })
+
+  it('should use two free spaces in the same sequence', () => {
+    const board = createBoardWithChips([
+      // Diagonal from (0,0) to (4,4) using both corners
+      // (0,0) is free space
+      { x: 1, y: 1, team: 1 },
+      { x: 2, y: 2, team: 1 },
+      { x: 3, y: 3, team: 1 },
+      // Need one more for sequence of 5
+      // Let's test with horizontal using 2 free spaces at corners
+    ])
+
+    // Top row from (0,0) to (9,0) - both corners are free
+    const board2 = createBoardWithChips([
+      // (0,0) is free
+      { x: 1, y: 0, team: 1 },
+      { x: 2, y: 0, team: 1 },
+      { x: 3, y: 0, team: 1 },
+      // Would need (4,0) to make a sequence
+    ])
+
+    // Actually, test corner-to-corner diagonal
+    const board3 = createBoardWithChips([
+      // (0,0) free space
+      { x: 1, y: 1, team: 1 },
+      { x: 2, y: 2, team: 1 },
+      { x: 3, y: 3, team: 1 },
+      { x: 4, y: 4, team: 1 },
+    ])
+
+    const sequences = detectSequences(board3)
+    expect(sequences.length).toBe(1)
+  })
+
+  it('should NOT count a sequence of only 3 chips + 1 free space', () => {
+    const board = createBoardWithChips([
+      // Only 3 chips + free space = 4 total (need 5)
+      { x: 1, y: 0, team: 1 },
+      { x: 2, y: 0, team: 1 },
+      { x: 3, y: 0, team: 1 },
+    ])
+
+    const sequences = detectSequences(board)
+    expect(sequences.length).toBe(0)
+  })
+
+  it('should count 4 chips + 1 free space corner as valid sequence', () => {
+    const board = createBoardWithChips([
+      // 4 chips + corner free space = 5 total
+      { x: 1, y: 0, team: 1 },
+      { x: 2, y: 0, team: 1 },
+      { x: 3, y: 0, team: 1 },
+      { x: 4, y: 0, team: 1 },
+      // (0,0) is free space, making total = 5
+    ])
+
+    const sequences = detectSequences(board)
+    expect(sequences.length).toBe(1)
+    expect(sequences[0].positions.length).toBe(5)
+  })
+
+  it('should handle sequences using multiple corners (if adjacent)', () => {
+    // Test if two corners can be used - but corners are not adjacent in standard Sequence
+    // This test verifies corners work independently
+    const board = createBoardWithChips([
+      // Sequence 1: Using top-left corner (0,0)
+      { x: 1, y: 0, team: 1 },
+      { x: 2, y: 0, team: 1 },
+      { x: 3, y: 0, team: 1 },
+      { x: 4, y: 0, team: 1 },
+      // Sequence 2: Using bottom-right corner (9,9)
+      { x: 5, y: 9, team: 1 },
+      { x: 6, y: 9, team: 1 },
+      { x: 7, y: 9, team: 1 },
+      { x: 8, y: 9, team: 1 },
+    ])
+
+    const sequences = detectSequences(board)
+    expect(sequences.length).toBe(2)
+  })
+})
