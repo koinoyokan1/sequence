@@ -10,7 +10,7 @@ export function Footer() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 1, duration: 0.8 }}
-      className="fixed bottom-0 left-0 right-0 bg-gradient-to-t from-gray-900 via-gray-900/95 to-transparent pointer-events-none"
+      className="fixed bottom-0 left-0 right-0 bg-gray-900 pointer-events-none"
     >
       <div className="max-w-7xl mx-auto px-4 py-3 pointer-events-auto">
         <button
