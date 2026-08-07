@@ -96,12 +96,15 @@ export function useRealtime(gameId: string | null) {
           filter: `game_id=eq.${gameId}`,
         },
         (payload) => {
+          console.log('Chat message received via realtime:', payload)
           if (payload.new) {
             addChatMessage(payload.new as any)
           }
         }
       )
-      .subscribe()
+      .subscribe((status) => {
+        console.log('Chat channel subscription status:', status)
+      })
 
     channels.push(chatChannel)
 
