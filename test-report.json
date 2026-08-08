@@ -1,0 +1,142 @@
+{
+  "timestamp": "2026-08-08T09:59:02.130Z",
+  "tests": [
+    {
+      "name": "desktop: Game setup",
+      "status": "PASS",
+      "details": {},
+      "timestamp": "2026-08-08T09:59:08.970Z"
+    },
+    {
+      "name": "desktop: Header toggle button exists",
+      "status": "PASS",
+      "details": {},
+      "timestamp": "2026-08-08T09:59:08.975Z"
+    },
+    {
+      "name": "desktop: Header expansion shows all elements",
+      "status": "PASS",
+      "details": {},
+      "timestamp": "2026-08-08T09:59:09.513Z"
+    },
+    {
+      "name": "desktop: Header collapse works",
+      "status": "PASS",
+      "details": {},
+      "timestamp": "2026-08-08T09:59:10.035Z"
+    },
+    {
+      "name": "desktop: Chat modal opens",
+      "status": "PASS",
+      "details": {},
+      "timestamp": "2026-08-08T09:59:11.093Z"
+    },
+    {
+      "name": "desktop: Chat input within viewport",
+      "status": "PASS",
+      "details": {},
+      "timestamp": "2026-08-08T09:59:11.112Z"
+    },
+    {
+      "name": "desktop: Chat input accepts text",
+      "status": "PASS",
+      "details": {},
+      "timestamp": "2026-08-08T09:59:11.119Z"
+    },
+    {
+      "name": "desktop: Send button enabled with text",
+      "status": "PASS",
+      "details": {},
+      "timestamp": "2026-08-08T09:59:11.120Z"
+    },
+    {
+      "name": "desktop: Send button disabled when empty",
+      "status": "PASS",
+      "details": {},
+      "timestamp": "2026-08-08T09:59:11.125Z"
+    },
+    {
+      "name": "desktop: Chat modal closes",
+      "status": "PASS",
+      "details": {},
+      "timestamp": "2026-08-08T09:59:11.651Z"
+    },
+    {
+      "name": "desktop: Team name colors distinct",
+      "status": "PASS",
+      "details": {},
+      "timestamp": "2026-08-08T09:59:11.660Z"
+    },
+    {
+      "name": "mobile: Game setup",
+      "status": "PASS",
+      "details": {},
+      "timestamp": "2026-08-08T09:59:18.807Z"
+    },
+    {
+      "name": "mobile: Header toggle button exists",
+      "status": "PASS",
+      "details": {},
+      "timestamp": "2026-08-08T09:59:18.810Z"
+    },
+    {
+      "name": "mobile: Header expansion shows all elements",
+      "status": "PASS",
+      "details": {},
+      "timestamp": "2026-08-08T09:59:20.158Z"
+    },
+    {
+      "name": "mobile: Header collapse works",
+      "status": "PASS",
+      "details": {},
+      "timestamp": "2026-08-08T09:59:20.685Z"
+    },
+    {
+      "name": "mobile: Chat modal opens",
+      "status": "PASS",
+      "details": {},
+      "timestamp": "2026-08-08T09:59:21.741Z"
+    },
+    {
+      "name": "mobile: Chat input within viewport",
+      "status": "PASS",
+      "details": {},
+      "timestamp": "2026-08-08T09:59:21.756Z"
+    },
+    {
+      "name": "mobile: Chat input accepts text",
+      "status": "PASS",
+      "details": {},
+      "timestamp": "2026-08-08T09:59:21.763Z"
+    },
+    {
+      "name": "mobile: Send button enabled with text",
+      "status": "PASS",
+      "details": {},
+      "timestamp": "2026-08-08T09:59:21.763Z"
+    },
+    {
+      "name": "mobile: Send button disabled when empty",
+      "status": "PASS",
+      "details": {},
+      "timestamp": "2026-08-08T09:59:21.768Z"
+    },
+    {
+      "name": "mobile: Chat modal closes",
+      "status": "PASS",
+      "details": {},
+      "timestamp": "2026-08-08T09:59:22.290Z"
+    },
+    {
+      "name": "mobile: Team name colors distinct",
+      "status": "PASS",
+      "details": {},
+      "timestamp": "2026-08-08T09:59:22.297Z"
+    }
+  ],
+  "summary": {
+    "passed": 22,
+    "failed": 0,
+    "warnings": 0
+  }
+}
