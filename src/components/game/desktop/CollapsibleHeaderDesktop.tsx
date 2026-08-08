@@ -34,12 +34,12 @@ export function CollapsibleHeaderDesktop() {
 
   return (
     <>
-      {/* Header Toggle Button - Always Visible */}
-      <div data-component="header-toggle-container" className="mb-1">
+      {/* Header Toggle Button - Compact for right side */}
+      <div data-component="header-toggle-container">
         <button
           data-component="header-toggle-button"
           onClick={toggleHeader}
-          className="w-full py-2 bg-gray-800 hover:bg-gray-700 rounded-lg transition-colors flex items-center justify-center gap-1.5 relative"
+          className="px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-lg transition-colors flex items-center gap-1.5 relative"
         >
           <span className="text-gray-300 text-sm">
             Game Info
@@ -75,7 +75,7 @@ export function CollapsibleHeaderDesktop() {
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.3 }}
-            className="overflow-hidden mb-4"
+            className="overflow-hidden mt-2 absolute right-0 top-10 z-10 min-w-[600px]"
           >
             <div data-component="header-content" className="bg-gray-800 rounded-lg shadow-lg overflow-hidden">
               <div data-component="game-info-section" className="p-3 flex items-center justify-between">

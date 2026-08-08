@@ -19,20 +19,24 @@ export function TurnIndicator() {
 
   if (!game || players.length === 0) return null
 
-  // Only show when it's the player's turn
-  if (!isMyTurn) return null
-
   return (
-    <div className="bg-gray-800 rounded-lg p-2 shadow-lg">
-      <div className="flex items-center justify-center">
+    <div className="h-10 flex items-center justify-center">
+      {isMyTurn && (
         <motion.div
-          animate={{ scale: [1, 1.1, 1] }}
-          transition={{ repeat: Infinity, duration: 1.5 }}
-          className="px-4 py-1 bg-primary-600 text-white rounded-lg font-semibold text-base"
+          initial={{ scale: 0, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          exit={{ scale: 0, opacity: 0 }}
+          transition={{ duration: 0.3 }}
         >
-          Your Turn!
+          <motion.div
+            animate={{ scale: [1, 1.1, 1] }}
+            transition={{ repeat: Infinity, duration: 1.5 }}
+            className="px-4 py-1 bg-primary-600 text-white rounded-lg font-semibold text-base shadow-lg"
+          >
+            Your Turn!
+          </motion.div>
         </motion.div>
-      </div>
+      )}
     </div>
   )
 }

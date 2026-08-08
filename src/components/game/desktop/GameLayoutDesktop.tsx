@@ -34,11 +34,23 @@ export function GameLayoutDesktop({ isGameOver, winnerTeam }: GameLayoutDesktopP
           </motion.div>
         )}
 
-        {/* Collapsible Header with Chat */}
-        <CollapsibleHeaderDesktop />
+        {/* Top Row: Turn Indicator (center) and Game Info (right) */}
+        {!isGameOver && (
+          <div className="relative mb-1">
+            {/* Turn Indicator - Centered */}
+            <div className="flex justify-center">
+              <TurnIndicator />
+            </div>
 
-        {/* Turn Indicator */}
-        {!isGameOver && <TurnIndicator />}
+            {/* Game Info Button - Absolute positioned to the right */}
+            <div className="absolute top-0 right-0">
+              <CollapsibleHeaderDesktop />
+            </div>
+          </div>
+        )}
+
+        {/* Game Info when game is over */}
+        {isGameOver && <CollapsibleHeaderDesktop />}
 
         {/* Board */}
         <div className="mt-1 flex-1 flex items-center justify-center min-h-0">
