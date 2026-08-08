@@ -36,7 +36,7 @@ export function BoardCell({ cell, highlighted, onClick }: BoardCellProps) {
     >
       {/* Free space marker */}
       {cell.isFreeSpace && (
-        <div className="text-white font-bold text-xs">FREE</div>
+        <div className="text-white font-bold text-[0.5rem] sm:text-xs leading-tight">FREE</div>
       )}
       
       {/* Card display - background changes to team color when chip is placed */}
