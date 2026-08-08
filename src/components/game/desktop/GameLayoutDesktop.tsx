@@ -41,7 +41,7 @@ export function GameLayoutDesktop({ isGameOver, winnerTeam }: GameLayoutDesktopP
         {!isGameOver && <TurnIndicator />}
 
         {/* Board */}
-        <div className="mt-1 flex-1 flex items-start justify-center overflow-auto">
+        <div className="mt-1 flex-1 flex items-center justify-center min-h-0">
           <BoardDesktop />
         </div>
 
