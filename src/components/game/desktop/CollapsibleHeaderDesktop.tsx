@@ -39,7 +39,7 @@ export function CollapsibleHeaderDesktop() {
         <button
           data-component="header-toggle-button"
           onClick={toggleHeader}
-          className="w-full py-2 bg-gray-800 hover:bg-gray-700 rounded-lg transition-colors flex items-center justify-center gap-1.5"
+          className="w-full py-2 bg-gray-800 hover:bg-gray-700 rounded-lg transition-colors flex items-center justify-center gap-1.5 relative"
         >
           <span className="text-gray-300 text-sm">
             Game Info
@@ -51,6 +51,18 @@ export function CollapsibleHeaderDesktop() {
           >
             ▼
           </motion.div>
+
+          {/* Notification Badge - shown when header is collapsed and there are unread messages */}
+          {!isHeaderExpanded && unreadCount > 0 && (
+            <motion.div
+              data-component="game-info-notification-badge"
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              className="absolute -top-1 -right-1 bg-red-500 text-white text-sm font-bold rounded-full w-6 h-6 flex items-center justify-center"
+            >
+              {unreadCount > 9 ? '9+' : unreadCount}
+            </motion.div>
+          )}
         </button>
       </div>
 
