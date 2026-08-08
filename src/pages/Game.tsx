@@ -3,11 +3,7 @@ import { useParams } from 'react-router-dom'
 import { supabase } from '@/lib/supabase'
 import { useGameStore } from '@/stores/gameStore'
 import { useRealtime } from '@/hooks/useRealtime'
-import { BoardGrid } from '@/components/board/BoardGrid'
-import { CardHand } from '@/components/cards/CardHand'
-import { GameHeader } from '@/components/game/GameHeader'
-import { TurnIndicator } from '@/components/game/TurnIndicator'
-import { GameChat } from '@/components/game/GameChat'
+import { ResponsiveGameLayout } from '@/components/game/ResponsiveGameLayout'
 import { SEO } from '@/components/SEO'
 import { HAND_SIZES } from '@/lib/constants'
 import { dealCards } from '@/lib/game-logic/cards'
@@ -24,13 +20,45 @@ export function Game() {
   const setPlayers = useGameStore(state => state.setPlayers)
   const setMyHand = useGameStore(state => state.setMyHand)
   const setBoardState = useGameStore(state => state.setBoardState)
-  
+
   // Set gameId from URL
   useEffect(() => {
     if (gameId) {
       setGameId(gameId)
     }
   }, [gameId, setGameId])
+
+  // Request fullscreen on mobile devices
+  useEffect(() => {
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent)
+    const isSmallScreen = window.innerWidth < 768
+
+    if (isMobile || isSmallScreen) {
+      const requestFullscreen = async () => {
+        try {
+          const elem = document.documentElement
+          if (elem.requestFullscreen) {
+            await elem.requestFullscreen()
+          } else if ((elem as any).webkitRequestFullscreen) {
+            // Safari
+            await (elem as any).webkitRequestFullscreen()
+          } else if ((elem as any).mozRequestFullScreen) {
+            // Firefox
+            await (elem as any).mozRequestFullScreen()
+          } else if ((elem as any).msRequestFullscreen) {
+            // IE/Edge
+            await (elem as any).msRequestFullscreen()
+          }
+        } catch (err) {
+          // Fullscreen request failed - user might have denied it or browser doesn't support it
+          console.log('Fullscreen request failed:', err)
+        }
+      }
+
+      // Delay to ensure user interaction has occurred
+      setTimeout(requestFullscreen, 500)
+    }
+  }, [])
 
   // Setup realtime subscriptions
   useRealtime(gameId || null)
@@ -175,27 +203,10 @@ export function Game() {
         type="game"
         noIndex={true}
       />
-      <div className="min-h-screen bg-gray-900 p-4 pb-32">
-      <div className="max-w-screen-xl mx-auto">
-        {/* Game Over Banner */}
-        {isGameOver && (
-          <div className="mb-4 bg-gradient-to-r from-yellow-600 to-yellow-500 rounded-xl p-6 text-center shadow-2xl">
-            <h1 className="text-4xl font-bold text-white mb-2">🎉 Game Over! 🎉</h1>
-            <p className="text-2xl text-white">
-              Team {winnerTeam === 1 ? 'Red' : 'Green'} Wins!
-            </p>
-          </div>
-        )}
-
-        <GameHeader />
-        {!isGameOver && <TurnIndicator />}
-        <div className="mt-6">
-          <BoardGrid />
-        </div>
-      </div>
-      {!isGameOver && <CardHand />}
-      {game.status === 'playing' && <GameChat />}
-    </div>
+      <ResponsiveGameLayout
+        isGameOver={isGameOver}
+        winnerTeam={winnerTeam}
+      />
     </>
   )
 }

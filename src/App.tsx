@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { Landing } from '@/pages/Landing'
 import { CreateGame } from '@/pages/CreateGame'
@@ -19,24 +19,34 @@ const queryClient = new QueryClient({
   },
 })
 
+function AppContent() {
+  const location = useLocation()
+  const isGamePage = location.pathname.startsWith('/game/')
+
+  return (
+    <div className="min-h-screen bg-gray-900">
+      <Routes>
+        <Route path="/" element={<Landing />} />
+        <Route path="/create" element={<CreateGame />} />
+        <Route path="/join" element={<JoinGame />} />
+        <Route path="/lobby/:gameId" element={<Lobby />} />
+        <Route path="/game/:gameId" element={<Game />} />
+        <Route path="/credits" element={<Credits />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+      <ToastContainer />
+      <LoadingSpinner />
+      {/* Hide footer in game mode */}
+      {!isGamePage && <Footer />}
+    </div>
+  )
+}
+
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <BrowserRouter basename="/sequence">
-        <div className="min-h-screen bg-gray-900">
-          <Routes>
-            <Route path="/" element={<Landing />} />
-            <Route path="/create" element={<CreateGame />} />
-            <Route path="/join" element={<JoinGame />} />
-            <Route path="/lobby/:gameId" element={<Lobby />} />
-            <Route path="/game/:gameId" element={<Game />} />
-            <Route path="/credits" element={<Credits />} />
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
-          <ToastContainer />
-          <LoadingSpinner />
-          <Footer />
-        </div>
+        <AppContent />
       </BrowserRouter>
     </QueryClientProvider>
   )
