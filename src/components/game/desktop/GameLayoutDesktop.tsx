@@ -44,10 +44,14 @@ export function GameLayoutDesktop({ isGameOver, winnerTeam }: GameLayoutDesktopP
         <div className="mt-1">
           <BoardDesktop />
         </div>
-      </div>
 
-      {/* Card Hand - Fixed at bottom */}
-      {!isGameOver && <CardHandDesktop />}
+        {/* Card Hand - Below board */}
+        {!isGameOver && (
+          <div className="mt-4">
+            <CardHandDesktop />
+          </div>
+        )}
+      </div>
     </div>
   )
 }

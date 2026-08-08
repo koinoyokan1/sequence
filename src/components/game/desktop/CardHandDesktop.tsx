@@ -29,11 +29,11 @@ export function CardHandDesktop() {
 
   return (
     <motion.div
-      initial={{ y: 100, opacity: 0 }}
+      initial={{ y: 20, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
-      className="fixed bottom-4 left-0 right-0 bg-gradient-to-t from-gray-900 via-gray-900/95 to-transparent p-4 pointer-events-none"
+      className="w-full"
     >
-      <div className="max-w-screen-xl mx-auto pointer-events-auto">
+      <div className="mx-auto">
         {/* Discard Button - Desktop with full text */}
         {canDiscard && isMyTurn && (
           <motion.div
