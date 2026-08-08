@@ -39,15 +39,15 @@ export function CollapsibleHeaderMobile() {
         <button
           data-component="header-toggle-button"
           onClick={toggleHeader}
-          className="w-full py-3 bg-gray-800 hover:bg-gray-700 rounded-lg transition-colors flex items-center justify-center gap-2"
+          className="w-full py-1.5 bg-gray-800 hover:bg-gray-700 rounded-lg transition-colors flex items-center justify-center gap-1.5"
         >
-          <span className="text-gray-300 text-sm">
-            {isHeaderExpanded ? 'Hide Header' : 'Show Header'}
+          <span className="text-gray-300 text-xs">
+            Game Info
           </span>
           <motion.div
             animate={{ rotate: isHeaderExpanded ? 180 : 0 }}
             transition={{ duration: 0.3 }}
-            className="text-gray-400"
+            className="text-gray-400 text-xs"
           >
             ▼
           </motion.div>
