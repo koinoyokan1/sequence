@@ -1,137 +1,137 @@
 {
-  "timestamp": "2026-08-08T09:59:02.130Z",
+  "timestamp": "2026-08-08T10:57:27.221Z",
   "tests": [
     {
       "name": "desktop: Game setup",
       "status": "PASS",
       "details": {},
-      "timestamp": "2026-08-08T09:59:08.970Z"
+      "timestamp": "2026-08-08T10:57:34.566Z"
     },
     {
       "name": "desktop: Header toggle button exists",
       "status": "PASS",
       "details": {},
-      "timestamp": "2026-08-08T09:59:08.975Z"
+      "timestamp": "2026-08-08T10:57:34.569Z"
     },
     {
       "name": "desktop: Header expansion shows all elements",
       "status": "PASS",
       "details": {},
-      "timestamp": "2026-08-08T09:59:09.513Z"
+      "timestamp": "2026-08-08T10:57:35.104Z"
     },
     {
       "name": "desktop: Header collapse works",
       "status": "PASS",
       "details": {},
-      "timestamp": "2026-08-08T09:59:10.035Z"
+      "timestamp": "2026-08-08T10:57:35.624Z"
     },
     {
       "name": "desktop: Chat modal opens",
       "status": "PASS",
       "details": {},
-      "timestamp": "2026-08-08T09:59:11.093Z"
+      "timestamp": "2026-08-08T10:57:36.680Z"
     },
     {
       "name": "desktop: Chat input within viewport",
       "status": "PASS",
       "details": {},
-      "timestamp": "2026-08-08T09:59:11.112Z"
+      "timestamp": "2026-08-08T10:57:36.697Z"
     },
     {
       "name": "desktop: Chat input accepts text",
       "status": "PASS",
       "details": {},
-      "timestamp": "2026-08-08T09:59:11.119Z"
+      "timestamp": "2026-08-08T10:57:36.703Z"
     },
     {
       "name": "desktop: Send button enabled with text",
       "status": "PASS",
       "details": {},
-      "timestamp": "2026-08-08T09:59:11.120Z"
+      "timestamp": "2026-08-08T10:57:36.704Z"
     },
     {
       "name": "desktop: Send button disabled when empty",
       "status": "PASS",
       "details": {},
-      "timestamp": "2026-08-08T09:59:11.125Z"
+      "timestamp": "2026-08-08T10:57:36.709Z"
     },
     {
       "name": "desktop: Chat modal closes",
       "status": "PASS",
       "details": {},
-      "timestamp": "2026-08-08T09:59:11.651Z"
+      "timestamp": "2026-08-08T10:57:37.231Z"
     },
     {
       "name": "desktop: Team name colors distinct",
       "status": "PASS",
       "details": {},
-      "timestamp": "2026-08-08T09:59:11.660Z"
+      "timestamp": "2026-08-08T10:57:37.240Z"
     },
     {
       "name": "mobile: Game setup",
       "status": "PASS",
       "details": {},
-      "timestamp": "2026-08-08T09:59:18.807Z"
+      "timestamp": "2026-08-08T10:57:44.265Z"
     },
     {
       "name": "mobile: Header toggle button exists",
       "status": "PASS",
       "details": {},
-      "timestamp": "2026-08-08T09:59:18.810Z"
+      "timestamp": "2026-08-08T10:57:44.269Z"
     },
     {
       "name": "mobile: Header expansion shows all elements",
       "status": "PASS",
       "details": {},
-      "timestamp": "2026-08-08T09:59:20.158Z"
+      "timestamp": "2026-08-08T10:57:46.119Z"
     },
     {
       "name": "mobile: Header collapse works",
       "status": "PASS",
       "details": {},
-      "timestamp": "2026-08-08T09:59:20.685Z"
+      "timestamp": "2026-08-08T10:57:46.640Z"
     },
     {
       "name": "mobile: Chat modal opens",
       "status": "PASS",
       "details": {},
-      "timestamp": "2026-08-08T09:59:21.741Z"
+      "timestamp": "2026-08-08T10:57:47.697Z"
     },
     {
       "name": "mobile: Chat input within viewport",
       "status": "PASS",
       "details": {},
-      "timestamp": "2026-08-08T09:59:21.756Z"
+      "timestamp": "2026-08-08T10:57:47.712Z"
     },
     {
       "name": "mobile: Chat input accepts text",
       "status": "PASS",
       "details": {},
-      "timestamp": "2026-08-08T09:59:21.763Z"
+      "timestamp": "2026-08-08T10:57:47.720Z"
     },
     {
       "name": "mobile: Send button enabled with text",
       "status": "PASS",
       "details": {},
-      "timestamp": "2026-08-08T09:59:21.763Z"
+      "timestamp": "2026-08-08T10:57:47.721Z"
     },
     {
       "name": "mobile: Send button disabled when empty",
       "status": "PASS",
       "details": {},
-      "timestamp": "2026-08-08T09:59:21.768Z"
+      "timestamp": "2026-08-08T10:57:47.726Z"
     },
     {
       "name": "mobile: Chat modal closes",
       "status": "PASS",
       "details": {},
-      "timestamp": "2026-08-08T09:59:22.290Z"
+      "timestamp": "2026-08-08T10:57:48.246Z"
     },
     {
       "name": "mobile: Team name colors distinct",
       "status": "PASS",
       "details": {},
-      "timestamp": "2026-08-08T09:59:22.297Z"
+      "timestamp": "2026-08-08T10:57:48.253Z"
     }
   ],
   "summary": {
