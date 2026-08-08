@@ -39,27 +39,22 @@ export function CardHandDesktop() {
           <motion.div
             initial={{ y: -10, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
-            className="text-center mb-3"
+            className="text-center mb-1"
           >
             <Button
               variant="danger"
-              size="md"
+              size="sm"
               onClick={() => selectedCard && discardCard(selectedCard)}
             >
-              {isDead 
-                ? '💀 Discard Dead Card & Draw New' 
-                : 'Discard Card (No valid moves)'}
+              {isDead
+                ? '💀 Discard Dead Card'
+                : 'Discard (No moves)'}
             </Button>
-            {isDead && (
-              <p className="text-xs text-gray-400 mt-1">
-                Both board positions for this card are occupied
-              </p>
-            )}
           </motion.div>
         )}
 
         {/* Cards - Desktop centered with hover effects */}
-        <div className="flex justify-center items-end space-x-3 overflow-x-auto pb-2">
+        <div className="flex justify-center items-end space-x-2">
           {myHand.map((card) => {
             const cardIsDead = getCardDeadStatus(card)
             return (

@@ -26,7 +26,7 @@ export function BoardDesktop() {
       initial={{ scale: 0.95, opacity: 0 }}
       animate={{ scale: 1, opacity: 1 }}
       transition={{ duration: 0.3 }}
-      className="grid grid-cols-10 gap-1 p-4 bg-gray-900 rounded-xl shadow-2xl max-w-4xl mx-auto"
+      className="grid grid-cols-10 gap-1 p-2 bg-gray-900 rounded-lg shadow-2xl w-full max-w-3xl mx-auto"
     >
       {boardState.map((row, y) =>
         row.map((cell, x) => (

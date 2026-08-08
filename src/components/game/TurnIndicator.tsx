@@ -23,12 +23,12 @@ export function TurnIndicator() {
   if (!isMyTurn) return null
 
   return (
-    <div className="bg-gray-800 rounded-lg p-4 shadow-lg">
+    <div className="bg-gray-800 rounded-lg p-2 shadow-lg">
       <div className="flex items-center justify-center">
         <motion.div
           animate={{ scale: [1, 1.1, 1] }}
           transition={{ repeat: Infinity, duration: 1.5 }}
-          className="px-6 py-2 bg-primary-600 text-white rounded-lg font-semibold text-lg"
+          className="px-4 py-1 bg-primary-600 text-white rounded-lg font-semibold text-base"
         >
           Your Turn!
         </motion.div>

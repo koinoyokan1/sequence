@@ -18,17 +18,17 @@ interface GameLayoutDesktopProps {
 export function GameLayoutDesktop({ isGameOver, winnerTeam }: GameLayoutDesktopProps) {
 
   return (
-    <div className="min-h-screen bg-gray-900 p-2 pb-44">
-      <div className="max-w-screen-xl mx-auto">
+    <div className="h-screen bg-gray-900 p-1 overflow-hidden flex flex-col">
+      <div className="max-w-screen-xl mx-auto w-full flex-1 flex flex-col overflow-hidden">
         {/* Game Over Banner - Desktop */}
         {isGameOver && (
           <motion.div
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            className="mb-4 bg-gradient-to-r from-yellow-600 to-yellow-500 rounded-xl p-6 text-center shadow-2xl"
+            className="mb-2 bg-gradient-to-r from-yellow-600 to-yellow-500 rounded-lg p-3 text-center shadow-2xl"
           >
-            <h1 className="text-4xl font-bold text-white mb-2">🎉 Game Over! 🎉</h1>
-            <p className="text-2xl text-white">
+            <h1 className="text-2xl font-bold text-white mb-1">🎉 Game Over! 🎉</h1>
+            <p className="text-lg text-white">
               Team {winnerTeam === 1 ? 'Red' : 'Green'} Wins!
             </p>
           </motion.div>
@@ -41,13 +41,13 @@ export function GameLayoutDesktop({ isGameOver, winnerTeam }: GameLayoutDesktopP
         {!isGameOver && <TurnIndicator />}
 
         {/* Board */}
-        <div className="mt-1">
+        <div className="mt-1 flex-1 flex items-center justify-center overflow-hidden">
           <BoardDesktop />
         </div>
 
         {/* Card Hand - Below board */}
         {!isGameOver && (
-          <div className="mt-4">
+          <div className="mt-2 pb-2">
             <CardHandDesktop />
           </div>
         )}

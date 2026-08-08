@@ -78,14 +78,14 @@ export function CollapsibleHeaderDesktop() {
             className="overflow-hidden mb-4"
           >
             <div data-component="header-content" className="bg-gray-800 rounded-lg shadow-lg overflow-hidden">
-              <div data-component="game-info-section" className="p-6 flex items-center justify-between">
+              <div data-component="game-info-section" className="p-3 flex items-center justify-between">
                 {/* Left - Team 1 */}
                 <div data-component="team1-info" className="text-center flex-1">
                   <div data-component="team1-score" className="flex items-baseline gap-2 justify-center">
-                    <span className="text-3xl font-bold text-white">{team1.sequenceCount}</span>
-                    <span className="text-gray-400 text-sm">/{team1.sequencesRequired}</span>
+                    <span className="text-2xl font-bold text-white">{team1.sequenceCount}</span>
+                    <span className="text-gray-400 text-xs">/{team1.sequencesRequired}</span>
                   </div>
-                  <div data-component="team1-names" className="text-sm text-team-1 mt-1">
+                  <div data-component="team1-names" className="text-xs text-team-1 mt-1">
                     {team1.playerNames}
                   </div>
                 </div>
@@ -101,10 +101,10 @@ export function CollapsibleHeaderDesktop() {
                 {/* Right - Team 2 */}
                 <div data-component="team2-info" className="text-center flex-1">
                   <div data-component="team2-score" className="flex items-baseline gap-2 justify-center">
-                    <span className="text-3xl font-bold text-white">{team2.sequenceCount}</span>
-                    <span className="text-gray-400 text-sm">/{team2.sequencesRequired}</span>
+                    <span className="text-2xl font-bold text-white">{team2.sequenceCount}</span>
+                    <span className="text-gray-400 text-xs">/{team2.sequencesRequired}</span>
                   </div>
-                  <div data-component="team2-names" className="text-sm text-team-2 mt-1">
+                  <div data-component="team2-names" className="text-xs text-team-2 mt-1">
                     {team2.playerNames}
                   </div>
                 </div>
@@ -114,11 +114,11 @@ export function CollapsibleHeaderDesktop() {
               <button
                 data-component="chat-open-button"
                 onClick={toggleChat}
-                className="w-full py-3 bg-gray-700 hover:bg-gray-600 transition-colors flex items-center justify-center relative"
+                className="w-full py-2 bg-gray-700 hover:bg-gray-600 transition-colors flex items-center justify-center relative"
               >
                 <span className="text-gray-300 text-sm mr-2">💬 Chat</span>
 
-                {/* Notification Badge */}
+                {/* Notification Badge - Always visible on chat button when header expanded */}
                 {unreadCount > 0 && (
                   <motion.div
                     data-component="chat-notification-badge"
@@ -179,33 +179,34 @@ export function CollapsibleHeaderDesktop() {
                       key={msg.id}
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
-                      className={`p-3 rounded ${
+                      className={`flex ${msg.player_id === playerId ? 'justify-end' : 'justify-start'}`}
+                    >
+                      <div className={`p-3 rounded max-w-[75%] ${
                         msg.player_id === playerId
                           ? 'bg-primary-600/20'
                           : 'bg-gray-700'
-                      }`}
-                    >
-
-                      <div className="flex items-baseline justify-between gap-2">
-                        <span
-                          className="text-sm font-semibold"
-                          style={{
-                            color: msg.player_id === playerId
-                              ? '#60a5fa'
-                              : allPlayers.find(p => p.id === msg.player_id)?.team === 1
-                                ? '#ef4444'
-                                : '#22c55e'
-                          }}
-                        >
-                          {msg.player_name}
-                        </span>
-                        <span className="text-xs text-gray-500">
-                          {formatTime(msg.created_at)}
-                        </span>
+                      }`}>
+                        <div className="flex items-baseline justify-between gap-2">
+                          <span
+                            className="text-sm font-semibold"
+                            style={{
+                              color: msg.player_id === playerId
+                                ? '#60a5fa'
+                                : allPlayers.find(p => p.id === msg.player_id)?.team === 1
+                                  ? '#ef4444'
+                                  : '#22c55e'
+                            }}
+                          >
+                            {msg.player_name}
+                          </span>
+                          <span className="text-xs text-gray-500">
+                            {formatTime(msg.created_at)}
+                          </span>
+                        </div>
+                        <p className="text-sm text-gray-200 mt-1 break-words">
+                          {msg.message}
+                        </p>
                       </div>
-                      <p className="text-sm text-gray-200 mt-1 break-words">
-                        {msg.message}
-                      </p>
                     </motion.div>
                   ))}
                 </AnimatePresence>
