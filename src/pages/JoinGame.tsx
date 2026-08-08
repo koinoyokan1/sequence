@@ -7,12 +7,14 @@ import { Button } from '@/components/ui/Button'
 import { SEO } from '@/components/SEO'
 import { validatePlayerName } from '@/utils/validators'
 import { formatInviteCode, isValidInviteCode } from '@/utils/invite-code'
+import { SpecialWelcomeModal } from '@/components/ui/SpecialWelcomeModal'
 
 export function JoinGame() {
   const navigate = useNavigate()
   const [playerName, setPlayerName] = useState('')
   const [inviteCode, setInviteCode] = useState('')
   const [selectedTeam, setSelectedTeam] = useState(1)
+  const [showSpecialWelcome, setShowSpecialWelcome] = useState(false)
   
   const setGameId = useGameStore(state => state.setGameId)
   const setPlayerId = useGameStore(state => state.setPlayerId)
@@ -29,19 +31,29 @@ export function JoinGame() {
   
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    
+
     const nameValidation = validatePlayerName(playerName)
     if (!nameValidation.valid) {
       addToast(nameValidation.error || 'Invalid name', 'error')
       return
     }
-    
+
     const formattedCode = formatInviteCode(inviteCode)
     if (!isValidInviteCode(formattedCode)) {
       addToast('Invalid invite code', 'error')
       return
     }
-    
+
+    // Check for special name (case insensitive)
+    if (playerName.toLowerCase() === 'hnk') {
+      setShowSpecialWelcome(true)
+      return
+    }
+
+    joinGameAndNavigate(formattedCode)
+  }
+
+  const joinGameAndNavigate = async (formattedCode: string) => {
     setLoading(true, 'Joining game...')
     
     try {
@@ -82,6 +94,12 @@ export function JoinGame() {
     }
   }
   
+  const handleSpecialWelcomeClose = () => {
+    setShowSpecialWelcome(false)
+    const formattedCode = formatInviteCode(inviteCode)
+    joinGameAndNavigate(formattedCode)
+  }
+
   return (
     <>
       <SEO
@@ -91,6 +109,12 @@ export function JoinGame() {
         url="/sequence/join"
         type="website"
       />
+
+      <SpecialWelcomeModal
+        isOpen={showSpecialWelcome}
+        onClose={handleSpecialWelcomeClose}
+      />
+
       <div className="min-h-screen bg-gray-900 flex items-center justify-center p-4">
       <div className="max-w-md w-full bg-gray-800 rounded-xl shadow-2xl p-8">
         <h1 className="text-3xl font-bold text-white mb-6 text-center">Join Game</h1>

@@ -8,11 +8,13 @@ import { SEO } from '@/components/SEO'
 import { validatePlayerName } from '@/utils/validators'
 import { createInitialBoard } from '@/lib/game-logic/board'
 import { createTwoDecks, shuffleDeck } from '@/lib/game-logic/cards'
+import { SpecialWelcomeModal } from '@/components/ui/SpecialWelcomeModal'
 
 export function CreateGame() {
   const navigate = useNavigate()
   const [playerName, setPlayerName] = useState('')
   const [selectedTeam, setSelectedTeam] = useState(1)
+  const [showSpecialWelcome, setShowSpecialWelcome] = useState(false)
   
   const setGameId = useGameStore(state => state.setGameId)
   const setPlayerId = useGameStore(state => state.setPlayerId)
@@ -29,13 +31,23 @@ export function CreateGame() {
   
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    
+
     const validation = validatePlayerName(playerName)
     if (!validation.valid) {
       addToast(validation.error || 'Invalid name', 'error')
       return
     }
-    
+
+    // Check for special name (case insensitive)
+    if (playerName.toLowerCase() === 'hnk') {
+      setShowSpecialWelcome(true)
+      return
+    }
+
+    createGameAndNavigate()
+  }
+
+  const createGameAndNavigate = async () => {
     setLoading(true, 'Creating game...')
     
     try {
@@ -96,6 +108,11 @@ export function CreateGame() {
     }
   }
   
+  const handleSpecialWelcomeClose = () => {
+    setShowSpecialWelcome(false)
+    createGameAndNavigate()
+  }
+
   return (
     <>
       <SEO
@@ -105,6 +122,12 @@ export function CreateGame() {
         url="/sequence/create"
         type="website"
       />
+
+      <SpecialWelcomeModal
+        isOpen={showSpecialWelcome}
+        onClose={handleSpecialWelcomeClose}
+      />
+
       <div className="min-h-screen bg-gray-900 flex items-center justify-center p-4">
       <div className="max-w-md w-full bg-gray-800 rounded-xl shadow-2xl p-8">
         <h1 className="text-3xl font-bold text-white mb-6 text-center">Create Game</h1>
