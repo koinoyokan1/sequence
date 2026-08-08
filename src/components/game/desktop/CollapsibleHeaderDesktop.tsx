@@ -152,11 +152,11 @@ export function CollapsibleHeaderDesktop() {
             {/* Chat Modal */}
             <motion.div
               data-component="chat-modal"
-              initial={{ opacity: 0, scale: 0.95, y: -20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: -20 }}
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
               transition={{ duration: 0.2 }}
-              className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] max-w-[90%] bg-gray-800 rounded-lg shadow-2xl z-50 flex flex-col max-h-[90vh]"
+              className="fixed inset-4 md:top-[5vh] md:left-1/2 md:-translate-x-1/2 md:bottom-[5vh] md:w-[600px] md:max-w-[90%] md:inset-auto bg-gray-800 rounded-lg shadow-2xl z-50 flex flex-col"
             >
               {/* Modal Header */}
               <div data-component="chat-modal-header" className="p-6 border-b border-gray-700 flex items-center justify-between">
