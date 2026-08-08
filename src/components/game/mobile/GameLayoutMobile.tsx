@@ -41,7 +41,7 @@ export function GameLayoutMobile({ isGameOver, winnerTeam }: GameLayoutMobilePro
         {!isGameOver && <TurnIndicator />}
 
         {/* Board */}
-        <div className="mt-2">
+        <div className="mt-1">
           <BoardMobile />
         </div>
       </div>

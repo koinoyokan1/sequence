@@ -1,0 +1,95 @@
+import { motion } from 'framer-motion'
+import { useCardHandLogic } from '../common/useCardHandLogic'
+import { useGameActions } from '@/hooks/useGameActions'
+import { PlayingCard } from '@/components/cards/PlayingCard'
+import { Button } from '@/components/ui/Button'
+
+/**
+ * Desktop-optimized card hand component
+ * - Larger cards with hover effects
+ * - Spacious layout
+ * - Full discard button text
+ */
+export function CardHandDesktop() {
+  const {
+    myHand,
+    selectedCard,
+    isMyTurn,
+    handleCardClick,
+    getCardDeadStatus,
+    canDiscardSelected,
+  } = useCardHandLogic()
+
+  const { discardCard } = useGameActions()
+
+  const canDiscard = canDiscardSelected()
+  const isDead = selectedCard ? getCardDeadStatus(selectedCard) : false
+
+  if (myHand.length === 0) return null
+
+  return (
+    <motion.div
+      initial={{ y: 100, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      className="fixed bottom-4 left-0 right-0 bg-gradient-to-t from-gray-900 via-gray-900/95 to-transparent p-4 pointer-events-none"
+    >
+      <div className="max-w-screen-xl mx-auto pointer-events-auto">
+        {/* Discard Button - Desktop with full text */}
+        {canDiscard && isMyTurn && (
+          <motion.div
+            initial={{ y: -10, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            className="text-center mb-3"
+          >
+            <Button
+              variant="danger"
+              size="md"
+              onClick={() => selectedCard && discardCard(selectedCard)}
+            >
+              {isDead 
+                ? '💀 Discard Dead Card & Draw New' 
+                : 'Discard Card (No valid moves)'}
+            </Button>
+            {isDead && (
+              <p className="text-xs text-gray-400 mt-1">
+                Both board positions for this card are occupied
+              </p>
+            )}
+          </motion.div>
+        )}
+
+        {/* Cards - Desktop centered with hover effects */}
+        <div className="flex justify-center items-end space-x-3 overflow-x-auto pb-2">
+          {myHand.map((card) => {
+            const cardIsDead = getCardDeadStatus(card)
+            return (
+              <motion.div
+                key={card.id}
+                className="relative"
+                whileHover={{ y: -8 }}
+                transition={{ type: 'spring', stiffness: 300 }}
+              >
+                {cardIsDead && (
+                  <motion.div
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    className="absolute -top-2 -right-2 z-10 bg-red-600 rounded-full w-6 h-6 flex items-center justify-center text-xs shadow-lg"
+                  >
+                    💀
+                  </motion.div>
+                )}
+                <PlayingCard
+                  card={card}
+                  selected={selectedCard?.id === card.id}
+                  disabled={!isMyTurn}
+                  onClick={() => handleCardClick(card)}
+                  size="md"
+                />
+              </motion.div>
+            )
+          })}
+        </div>
+      </div>
+    </motion.div>
+  )
+}

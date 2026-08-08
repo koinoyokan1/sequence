@@ -35,7 +35,7 @@ export function CollapsibleHeaderMobile() {
   return (
     <>
       {/* Header Toggle Button - Always Visible */}
-      <div data-component="header-toggle-container" className="mb-3">
+      <div data-component="header-toggle-container" className="mb-1">
         <button
           data-component="header-toggle-button"
           onClick={toggleHeader}
